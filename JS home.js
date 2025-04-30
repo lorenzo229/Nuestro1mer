@@ -14,28 +14,27 @@ function iniciar() {
   }, 1000);
 }
 
-// Contador regresivo (80 años)
 function actualizarContador() {
   const ahora = new Date();
-  const fechaFinal = new Date(ahora.getFullYear() + 80, ahora.getMonth(), ahora.getDate());
-  
-  const diff = fechaFinal - ahora;
+  const fechaInicio = new Date("2024-05-02T11:51:00");
+
+  const diff = ahora - fechaInicio; // diferencia en milisegundos
   const segundos = Math.floor(diff / 1000);
-  
-  const años = Math.floor(segundos / (365 * 24 * 60 * 60));
-  const meses = Math.floor((segundos % (365 * 24 * 60 * 60)) / (30 * 24 * 60 * 60));
-  const días = Math.floor((segundos % (30 * 24 * 60 * 60)) / (24 * 60 * 60));
+
+  const años = Math.floor(segundos / (365.25 * 24 * 60 * 60));
+  const meses = Math.floor((segundos % (365.25 * 24 * 60 * 60)) / (30.44 * 24 * 60 * 60));
+  const días = Math.floor((segundos % (30.44 * 24 * 60 * 60)) / (24 * 60 * 60));
   const horas = Math.floor((segundos % (24 * 60 * 60)) / (60 * 60));
   const minutos = Math.floor((segundos % (60 * 60)) / 60);
   const segs = Math.floor(segundos % 60);
 
-  // Actualizar DOM
-  document.getElementById("years").textContent = String(años).padStart(2, '0');
-  document.getElementById("months").textContent = String(meses).padStart(2, '0');
-  document.getElementById("days").textContent = String(días).padStart(2, '0');
-  document.getElementById("hours").textContent = String(horas).padStart(2, '0');
-  document.getElementById("minutes").textContent = String(minutos).padStart(2, '0');
-  document.getElementById("seconds").textContent = String(segs).padStart(2, '0');
+  document.getElementById("contador").textContent = 
+    `${años} años, ${meses} meses, ${días} días, ${horas} horas, ${minutos} minutos, ${segs} segundos`;
+}
+
+// Actualiza el contador cada segundo
+setInterval(actualizarContador, 1000);
+
 }
 
 // Toggle de música con localStorage
