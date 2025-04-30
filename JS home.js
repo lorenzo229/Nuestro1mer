@@ -14,11 +14,12 @@ function iniciar() {
   }, 1000);
 }
 
+// Contador progresivo desde el 2 de mayo de 2024 a las 11:51 AM
 function actualizarContador() {
   const ahora = new Date();
-  const fechaInicio = new Date("2024-05-02T11:51:00");
+  const fechaInicio = new Date(2024, 4, 2, 11, 51, 0); // Mayo = 4 (meses van de 0 a 11)
 
-  const diff = ahora - fechaInicio; // diferencia en milisegundos
+  const diff = ahora - fechaInicio; // Diferencia en milisegundos
   const segundos = Math.floor(diff / 1000);
 
   const años = Math.floor(segundos / (365.25 * 24 * 60 * 60));
@@ -28,14 +29,18 @@ function actualizarContador() {
   const minutos = Math.floor((segundos % (60 * 60)) / 60);
   const segs = Math.floor(segundos % 60);
 
-  document.getElementById("contador").textContent = 
-    `${años} años, ${meses} meses, ${días} días, ${horas} horas, ${minutos} minutos, ${segs} segundos`;
+  // Actualizar DOM
+  document.getElementById("years").textContent = String(años).padStart(2, '0');
+  document.getElementById("months").textContent = String(meses).padStart(2, '0');
+  document.getElementById("days").textContent = String(días).padStart(2, '0');
+  document.getElementById("hours").textContent = String(horas).padStart(2, '0');
+  document.getElementById("minutes").textContent = String(minutos).padStart(2, '0');
+  document.getElementById("seconds").textContent = String(segs).padStart(2, '0');
 }
 
-// Actualiza el contador cada segundo
+// Llamar a la función cada segundo
 setInterval(actualizarContador, 1000);
 
-}
 
 // Toggle de música con localStorage
 function toggleMusic() {
