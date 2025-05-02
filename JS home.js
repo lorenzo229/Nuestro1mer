@@ -49,6 +49,7 @@ setInterval(actualizarContador, 1000);
 
 
 
+
 // Toggle de música con localStorage
 function toggleMusic() {
   const audio = document.getElementById('music');
