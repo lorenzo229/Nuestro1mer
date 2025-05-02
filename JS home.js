@@ -14,26 +14,45 @@ function iniciar() {
   }, 1000);
 }
 
-// Contador progresivo desde el 2 de mayo de 2024 a las 11:51 AM
 function actualizarContador() {
   const ahora = new Date();
-  const fechaInicio = new Date(2024, 4, 2, 11, 51, 0); // Mayo = 4 (meses van de 0 a 11)
+  const inicio = new Date(2024, 4, 2, 11, 51, 0); // 2 de mayo de 2024, 11:51 AM
 
-  // Calcular la diferencia en milisegundos
-  const diff = ahora - fechaInicio;
+  // Calcular años, meses y días exactos
+  let años = ahora.getFullYear() - inicio.getFullYear();
+  let meses = ahora.getMonth() - inicio.getMonth();
+  let días = ahora.getDate() - inicio.getDate();
 
-  // Convertir la diferencia a años, meses y días
-  const totalSegundos = Math.floor(diff / 1000);
-  const totalDias = Math.floor(totalSegundos / (24 * 60 * 60));
-  
-  const años = Math.floor(totalDias / 365);
-  const meses = Math.floor((totalDias % 365) / 30);
-  const días = totalDias % 30;
+  if (días < 0) {
+    meses--;
+    const ultimoDiaMesAnterior = new Date(ahora.getFullYear(), ahora.getMonth(), 0).getDate();
+    días += ultimoDiaMesAnterior;
+  }
 
-  // Calcular horas, minutos y segundos
-  const horas = Math.floor((totalSegundos % (24 * 60 * 60)) / (60 * 60));
-  const minutos = Math.floor((totalSegundos % (60 * 60)) / 60);
-  const segs = totalSegundos % 60;
+  if (meses < 0) {
+    años--;
+    meses += 12;
+  }
+
+  // Calcular tiempo (horas, minutos, segundos) exacto
+  const inicioMismoDia = new Date(
+    ahora.getFullYear(),
+    ahora.getMonth(),
+    ahora.getDate(),
+    inicio.getHours(),
+    inicio.getMinutes(),
+    inicio.getSeconds()
+  );
+
+  let diffTiempo = ahora - inicioMismoDia;
+  if (diffTiempo < 0) {
+    días--;
+    diffTiempo += 24 * 60 * 60 * 1000;
+  }
+
+  const horas = Math.floor(diffTiempo / (1000 * 60 * 60));
+  const minutos = Math.floor((diffTiempo % (1000 * 60 * 60)) / (1000 * 60));
+  const segundos = Math.floor((diffTiempo % (1000 * 60)) / 1000);
 
   // Actualizar DOM
   document.getElementById("years").textContent = String(años).padStart(2, '0');
@@ -41,10 +60,9 @@ function actualizarContador() {
   document.getElementById("days").textContent = String(días).padStart(2, '0');
   document.getElementById("hours").textContent = String(horas).padStart(2, '0');
   document.getElementById("minutes").textContent = String(minutos).padStart(2, '0');
-  document.getElementById("seconds").textContent = String(segs).padStart(2, '0');
+  document.getElementById("seconds").textContent = String(segundos).padStart(2, '0');
 }
 
-// Llamar a la función cada segundo
 setInterval(actualizarContador, 1000);
 
 
