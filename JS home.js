@@ -19,15 +19,21 @@ function actualizarContador() {
   const ahora = new Date();
   const fechaInicio = new Date(2024, 4, 2, 11, 51, 0); // Mayo = 4 (meses van de 0 a 11)
 
-  const diff = ahora - fechaInicio; // Diferencia en milisegundos
-  const segundos = Math.floor(diff / 1000);
+  // Calcular la diferencia en milisegundos
+  const diff = ahora - fechaInicio;
 
-  const años = Math.floor(segundos / (365.25 * 24 * 60 * 60));
-  const meses = Math.floor((segundos % (365.25 * 24 * 60 * 60)) / (30.44 * 24 * 60 * 60));
-  const días = Math.floor((segundos % (30.44 * 24 * 60 * 60)) / (24 * 60 * 60));
-  const horas = Math.floor((segundos % (24 * 60 * 60)) / (60 * 60));
-  const minutos = Math.floor((segundos % (60 * 60)) / 60);
-  const segs = Math.floor(segundos % 60);
+  // Convertir la diferencia a años, meses y días
+  const totalSegundos = Math.floor(diff / 1000);
+  const totalDias = Math.floor(totalSegundos / (24 * 60 * 60));
+  
+  const años = Math.floor(totalDias / 365);
+  const meses = Math.floor((totalDias % 365) / 30);
+  const días = totalDias % 30;
+
+  // Calcular horas, minutos y segundos
+  const horas = Math.floor((totalSegundos % (24 * 60 * 60)) / (60 * 60));
+  const minutos = Math.floor((totalSegundos % (60 * 60)) / 60);
+  const segs = totalSegundos % 60;
 
   // Actualizar DOM
   document.getElementById("years").textContent = String(años).padStart(2, '0');
