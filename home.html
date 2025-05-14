@@ -162,6 +162,66 @@
   max-width: 600px;
   font-family: 'Open Sans', sans-serif;
 }
+.roulette-container {
+  text-align: center;
+  margin: 50px auto;
+  font-family: 'Roboto', sans-serif;
+}
+
+.wheel {
+  width: 300px;
+  height: 300px;
+  border: 8px solid #ff6b81;
+  border-radius: 50%;
+  margin: 20px auto;
+  position: relative;
+  overflow: hidden;
+  transform: rotate(0deg);
+  transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.segment {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  background-color: #ffe6e6;
+  color: #d6336c;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: 100% 100%;
+  border-right: 2px solid #ff6b81;
+  border-bottom: 2px solid #ff6b81;
+}
+
+.segment:nth-child(1) { transform: rotate(0deg) translateX(-50%); }
+.segment:nth-child(2) { transform: rotate(72deg) translateX(-50%); }
+.segment:nth-child(3) { transform: rotate(144deg) translateX(-50%); }
+.segment:nth-child(4) { transform: rotate(216deg) translateX(-50%); }
+.segment:nth-child(5) { transform: rotate(288deg) translateX(-50%); }
+
+.spin-button {
+  padding: 12px 24px;
+  font-size: 18px;
+  background-color: #ff6b81;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.spin-button:hover {
+  background-color: #ff4d6d;
+}
+
+.result-text {
+  margin-top: 20px;
+  font-size: 20px;
+  color: #ff6b81;
+  font-weight: bold;
+}
 
   </style>
 </head>
@@ -247,6 +307,19 @@
         <img src="foto5.jpg" alt="Foto 5" class="gallery-item" onclick="openModal(this)">
       </div>
     </div>
+<!-- Ruleta de comida -->
+<div class="roulette-container">
+  <h2>¿Qué comemos hoy? 🎲</h2>
+  <div class="wheel" id="wheel">
+    <div class="segment">Bon o bon</div>
+    <div class="segment">Pancho</div>
+    <div class="segment">Masitas</div>
+    <div class="segment">Gomitas</div>
+    <div class="segment">Tu elección</div>
+  </div>
+  <button class="spin-button" onclick="spinWheel()">¡Girar!</button>
+  <p id="result" class="result-text"></p>
+</div>
 
     <!-- Modal para vista ampliada -->
     <div id="imageModal" class="modal">
@@ -318,6 +391,35 @@
   setInterval(updateCountdown, 1000);
   updateCountdown();
 </script>
+<script>
+  // ...otras funciones que ya tenés...
+
+  // Ruleta de comida
+  const items = ["Bon o bon", "Pancho", "Masitas", "Gomitas", "Tu elección"];
+  let spinning = false;
+
+  function spinWheel() {
+    if (spinning) return;
+    spinning = true;
+    const wheel = document.getElementById("wheel");
+    const resultText = document.getElementById("result");
+
+    const selected = Math.floor(Math.random() * items.length);
+    const anglePerSegment = 360 / items.length;
+    const baseRotation = 360 * 5;
+    const finalAngle = baseRotation + (360 - selected * anglePerSegment) - (anglePerSegment / 2);
+
+    wheel.style.transition = "transform 4s cubic-bezier(0.33, 1, 0.68, 1)";
+    wheel.style.transform = `rotate(${finalAngle}deg)`;
+
+    setTimeout(() => {
+      resultText.textContent = `¡Te tocó: ${items[selected]}! 🎉`;
+      spinning = false;
+    }, 4000);
+  }
+</script>
+</body>
+</html>
 
 </body>
 </html>
