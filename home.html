@@ -218,6 +218,11 @@
       <div class="time-section"><span id="seconds">00</span><div class="label">SEGUNDOS</div></div>
     </div>
     <p style="text-align:center; color: #ff6b81; font-size: 18px;">Lo que nos queda por vivir juntos ❤️</p>
+<!-- Cuenta regresiva hasta el 14 de mayo de 2026 -->
+<div id="countdown-container">
+  <h2 style="color:#ff6b81;">Tu Proximo cumpleaños)</h2>
+  <div id="countdown" style="font-size: 20px; margin-top: 10px;"></div>
+</div>
 
     <!-- Galería de fotos integrada -->
     <div class="gallery-section">
@@ -278,5 +283,29 @@
       document.getElementById('imageModal').style.display = "none";
     }
   </script>
+  <script>
+  function updateCountdown() {
+    const targetDate = new Date("2026-05-14T00:00:00").getTime();
+    const now = new Date().getTime();
+    const difference = targetDate - now;
+
+    if (difference <= 0) {
+      document.getElementById("countdown").innerHTML = "¡Ya ha llegado el 14 de mayo de 2026!";
+      return;
+    }
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((difference / (1000 * 60)) % 60);
+    const seconds = Math.floor((difference / 1000) % 60);
+
+    document.getElementById("countdown").innerHTML =
+      `${days} días, ${hours} horas, ${minutes} minutos, ${seconds} segundos`;
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+</script>
+
 </body>
 </html>
