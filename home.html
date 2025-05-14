@@ -422,6 +422,29 @@ function spinWheel() {
 
 drawRouletteWheel();
 </script>
+<script>
+  function updateCountdown() {
+    const targetDate = new Date("2026-05-14T00:00:00").getTime();
+    const now = new Date().getTime();
+    const difference = targetDate - now;
+
+    if (difference <= 0) {
+      document.getElementById("countdown").innerHTML = "¡Ya ha llegado el 14 de mayo de 2026!";
+      return;
+    }
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((difference / (1000 * 60)) % 60);
+    const seconds = Math.floor((difference / 1000) % 60);
+
+    document.getElementById("countdown").innerHTML =
+      `${days} días, ${hours} horas, ${minutes} minutos, ${seconds} segundos`;
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+</script>
 
 </body>
 </html>
