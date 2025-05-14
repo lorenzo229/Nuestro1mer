@@ -212,7 +212,6 @@
   font-weight: bold;
 }
 
-
   </style>
 </head>
 <div class="music-toggle">
@@ -301,11 +300,6 @@
   <h2>¿Qué comemos hoy? 🎲</h2>
   <div class="wheel-wrapper">
     <canvas id="wheelCanvas" width="300" height="300"></canvas>
-    <div class="segment" style="--i:0;">Bon o bon</div>
-      <div class="segment" style="--i:1;">Pancho</div>
-      <div class="segment" style="--i:2;">Masitas</div>
-      <div class="segment" style="--i:3;">Gomitas</div>
-      <div class="segment" style="--i:4;">Tu elección</div>
     <div class="pointer">▲</div>
   </div>
   <button class="spin-button" onclick="spinWheel()">¡Girar!</button>
@@ -361,88 +355,72 @@
       document.getElementById('imageModal').style.display = "none";
     }
   </script>
+ ruleta
   <script>
-  function updateCountdown() {
-    const targetDate = new Date("2026-05-14T00:00:00").getTime();
-    const now = new Date().getTime();
-    const difference = targetDate - now;
+const options = ["Bon o bon", "Pancho", "Masitas", "Gomitas", "Tu elección"];
+const colors = ["#ffb3ba", "#ffdfba", "#ffffba", "#baffc9", "#bae1ff"];
+let startAngle = 0;
+let arc = Math.PI * 2 / options.length;
+let spinTimeout = null;
+let spinAngleStart = 0;
+let spinTime = 0;
+let spinTimeTotal = 0;
+const canvas = document.getElementById("wheelCanvas");
+const ctx = canvas.getContext("2d");
 
-    if (difference <= 0) {
-      document.getElementById("countdown").innerHTML = "¡Ya ha llegado el 14 de mayo de 2026!";
-      return;
-    }
+function drawRouletteWheel() {
+  ctx.clearRect(0, 0, 300, 300); // Borrar el canvas
+  for (let i = 0; i < options.length; i++) {
+    const angle = startAngle + i * arc;
+    ctx.fillStyle = colors[i];
+    ctx.beginPath();
+    ctx.moveTo(150, 150);
+    ctx.arc(150, 150, 150, angle, angle + arc, false);
+    ctx.lineTo(150, 150);
+    ctx.fill();
 
-    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((difference / (1000 * 60)) % 60);
-    const seconds = Math.floor((difference / 1000) % 60);
-
-    document.getElementById("countdown").innerHTML =
-      `${days} días, ${hours} horas, ${minutes} minutos, ${seconds} segundos`;
+    // Dibuja el texto alrededor de la rueda
+    ctx.save();
+    ctx.fillStyle = "black";
+    ctx.translate(150 + Math.cos(angle + arc / 2) * 100, 150 + Math.sin(angle + arc / 2) * 100);
+    ctx.rotate(angle + arc / 2);
+    ctx.fillText(options[i], -ctx.measureText(options[i]).width / 2, 0);
+    ctx.restore();
   }
 
-  setInterval(updateCountdown, 1000);
-  updateCountdown();
-</script>
-<script>
-  // ...otras funciones que ya tenés...
+  // Dibuja el texto en el centro
+  ctx.save();
+  ctx.fillStyle = "black";
+  ctx.font = "24px Arial"; // Ajusta el tamaño de la fuente
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("¡Gira la ruleta!", 150, 150); // Texto en el centro
+  ctx.restore();
+}
 
-<script>
-  const options = ["Bon o bon", "Pancho", "Masitas", "Gomitas", "Tu elección"];
-  const colors = ["#ffb3ba", "#ffdfba", "#ffffba", "#baffc9", "#bae1ff"];
-  let startAngle = 0;
-  let arc = Math.PI * 2 / options.length;
-  let spinTimeout = null;
-  let spinAngleStart = 0;
-  let spinTime = 0;
-  let spinTimeTotal = 0;
-  const canvas = document.getElementById("wheelCanvas");
-  const ctx = canvas.getContext("2d");
-
-  function drawRouletteWheel() {
-    ctx.clearRect(0, 0, 300, 300);
-    for (let i = 0; i < options.length; i++) {
-      const angle = startAngle + i * arc;
-      ctx.fillStyle = colors[i];
-      ctx.beginPath();
-      ctx.moveTo(150, 150);
-      ctx.arc(150, 150, 150, angle, angle + arc, false);
-      ctx.lineTo(150, 150);
-      ctx.fill();
-
-      // Text
-      ctx.save();
-      ctx.fillStyle = "black";
-      ctx.translate(150 + Math.cos(angle + arc / 2) * 100, 150 + Math.sin(angle + arc / 2) * 100);
-      ctx.rotate(angle + arc / 2);
-      ctx.fillText(options[i], -ctx.measureText(options[i]).width / 2, 0);
-      ctx.restore();
-    }
+function rotateWheel() {
+  spinAngleStart *= 0.97; // Reducir la velocidad de giro
+  if (spinTime >= spinTimeTotal || spinAngleStart < 0.1) {
+    const degrees = startAngle * 180 / Math.PI + 90;
+    const index = Math.floor((360 - (degrees % 360)) / (360 / options.length)) % options.length;
+    document.getElementById("result").innerText = "Resultado: " + options[index];
+    return;
   }
 
-  function rotateWheel() {
-    spinAngleStart *= 0.97;
-    if (spinTime >= spinTimeTotal || spinAngleStart < 0.1) {
-      const degrees = startAngle * 180 / Math.PI + 90;
-      const index = Math.floor((360 - (degrees % 360)) / (360 / options.length)) % options.length;
-      document.getElementById("result").innerText = "Resultado: " + options[index];
-      return;
-    }
-
-    startAngle += (spinAngleStart * Math.PI / 180);
-    spinTime += 30;
-    drawRouletteWheel();
-    spinTimeout = setTimeout(rotateWheel, 30);
-  }
-
-  function spinWheel() {
-    spinAngleStart = Math.random() * 10 + 20;
-    spinTime = 0;
-    spinTimeTotal = Math.random() * 1000 + 3000;
-    rotateWheel();
-  }
-
+  startAngle += (spinAngleStart * Math.PI / 180);
+  spinTime += 30;
   drawRouletteWheel();
+  spinTimeout = setTimeout(rotateWheel, 30);
+}
+
+function spinWheel() {
+  spinAngleStart = Math.random() * 10 + 30;  // Un valor más alto al principio para la velocidad
+  spinTime = 0;
+  spinTimeTotal = Math.random() * 1000 + 3000;
+  rotateWheel();
+}
+
+drawRouletteWheel();
 </script>
 
 </body>
