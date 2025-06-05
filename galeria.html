@@ -50,10 +50,9 @@
   <div class="gallery-grid" id="gallery"></div>
 
   <script>
-    // Configura tu Supabase
     const supabaseUrl = "https://sirfkieteanyrdifckxr.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpcmZraWV0ZWFueXJkaWZja3hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxNjMyNTAsImV4cCI6MjA2NDczOTI1MH0.mcm2aJ_kLMTaLM_81bVlBWYxBZvr5xEnXeBj70N-Gfw";
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
     const BUCKET = "fotos";
 
     const fileInput = document.getElementById("fileInput");
@@ -69,7 +68,7 @@
       const file = fileInput.files[0];
       const filePath = `${Date.now()}_${file.name}`;
 
-      const { error: uploadError } = await supabaseClient.storage.from(BUCKET).upload(filePath, file);
+      const { error: uploadError } = await supabase.storage.from(BUCKET).upload(filePath, file);
 
       if (uploadError) {
         alert("Error al subir la imagen");
@@ -84,7 +83,8 @@
 
     async function loadGallery() {
       gallery.innerHTML = "";
-      const { data: files, error } = await supabaseClient.storage.from(BUCKET).list("", { limit: 100 });
+
+      const { data: files, error } = await supabase.storage.from(BUCKET).list("", { limit: 100 });
 
       if (error) {
         console.error("Error al obtener las imágenes:", error);
@@ -92,7 +92,12 @@
       }
 
       for (const file of files) {
-        const { publicUrl } = supabaseClient.storage.from(BUCKET).getPublicUrl(file.name);
+        const { publicUrl, error: urlError } = supabase.storage.from(BUCKET).getPublicUrl(file.name);
+        if (urlError) {
+          console.error("Error obteniendo URL pública:", urlError);
+          continue;
+        }
+
         const img = document.createElement("img");
         img.src = publicUrl;
         gallery.appendChild(img);
