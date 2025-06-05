@@ -56,12 +56,10 @@
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
     const BUCKET = "fotos";
 
-    // Elementos del DOM
     const fileInput = document.getElementById("fileInput");
     const uploadBtn = document.getElementById("uploadBtn");
     const gallery = document.getElementById("gallery");
 
-    // Subir imagen
     uploadBtn.addEventListener("click", async () => {
       if (fileInput.files.length === 0) {
         alert("Por favor, selecciona una imagen primero.");
@@ -71,7 +69,6 @@
       const file = fileInput.files[0];
       const filePath = `${Date.now()}_${file.name}`;
 
-      // Subir archivo al bucket
       const { error: uploadError } = await supabaseClient.storage.from(BUCKET).upload(filePath, file);
 
       if (uploadError) {
@@ -81,11 +78,10 @@
       }
 
       alert("Imagen subida correctamente.");
-      fileInput.value = ""; // limpiar input
-      loadGallery(); // recargar galería
+      fileInput.value = "";
+      loadGallery();
     });
 
-    // Cargar y mostrar la galería
     async function loadGallery() {
       gallery.innerHTML = "";
       const { data: files, error } = await supabaseClient.storage.from(BUCKET).list("", { limit: 100 });
@@ -96,14 +92,13 @@
       }
 
       for (const file of files) {
-        const { data: publicUrlData } = await supabaseClient.storage.from(BUCKET).getPublicUrl(file.name);
+        const { publicUrl } = supabaseClient.storage.from(BUCKET).getPublicUrl(file.name);
         const img = document.createElement("img");
-        img.src = publicUrlData.publicUrl;
+        img.src = publicUrl;
         gallery.appendChild(img);
       }
     }
 
-    // Cargar galería al inicio
     loadGallery();
   </script>
 
