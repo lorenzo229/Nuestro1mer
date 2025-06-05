@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Galería con Back4App</title>
+  <script src="https://unpkg.com/parse/dist/parse.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background-color: #f9f9f9;
+      padding: 40px;
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px;
+    }
+    img {
+      max-width: 200px;
+      margin: 10px;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📸 Galería con Back4App</h1>
+
+  <input type="file" id="fileInput">
+  <button onclick="uploadImage()">Subir Imagen</button>
+
+  <div id="imageGallery"></div>
+
+  <script>
+    // Inicializar Parse con tus credenciales
+    Parse.initialize("7nGk94z40oBPgxJ9zErfHb8CFDeooj6nVA7VH4JB", "RaZiYSLq7yd5wra3UBHeeOZZ6C45yCzwtj5tRPuX");
+    Parse.serverURL = "https://parseapi.back4app.com/";
+
+    // Subir imagen
+    async function uploadImage() {
+      const fileInput = document.getElementById("fileInput");
+      if (fileInput.files.length === 0) {
+        alert("Seleccioná una imagen primero.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const name = file.name;
+      const parseFile = new Parse.File(name, file);
+
+      try {
+        await parseFile.save();
+
+        const ImageObject = Parse.Object.extend("ImageObject");
+        const imageObject = new ImageObject();
+        imageObject.set("image", parseFile);
+        await imageObject.save();
+
+        alert("Imagen subida correctamente.");
+        displayImages(); // refrescar galería
+      } catch (error) {
+        console.error("Error al subir:", error);
+        alert("Ocurrió un error al subir.");
+      }
+    }
+
+    // Mostrar imágenes guardadas
+    async function displayImages() {
+      const imageGallery = document.getElementById("imageGallery");
+      imageGallery.innerHTML = "";
+
+      const ImageObject = Parse.Object.extend("ImageObject");
+      const query = new Parse.Query(ImageObject);
+
+      try {
+        const results = await query.find();
+        results.forEach((obj) => {
+          const file = obj.get("image");
+          const url = file.url();
+
+          const img = document.createElement("img");
+          img.src = url;
+          imageGallery.appendChild(img);
+        });
+      } catch (error) {
+        console.error("Error al cargar imágenes:", error);
+      }
+    }
+
+    // Cargar imágenes al iniciar
+    displayImages();
+  </script>
+
+</body>
+</html>

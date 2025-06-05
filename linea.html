@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Línea del Tiempo</title>
+  <link rel="stylesheet" href="Home style.css">
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #faf8ef, #f5f2e7);
+      font-family: 'Playfair Display', serif;
+      padding-top: 40px;
+      text-align: center;
+    }
+
+    .main-box {
+      max-width: 90%;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.05);
+      padding: 30px;
+      margin: 40px auto;
+    }
+
+    .scroll-container {
+      overflow-x: auto;
+      display: flex;
+      gap: 25px;
+      padding: 25px 0;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .scroll-container::-webkit-scrollbar-thumb {
+      background: #bbb;
+      border-radius: 10px;
+    }
+
+    .timeline-image {
+      height: 500px;
+      border-radius: 5px;
+      object-fit: cover;
+    }
+
+    h1 {
+      color: #ff6b81;
+      margin-bottom: 20px;
+    }
+
+    .back-button {
+      display: inline-block;
+      background: #ff6b81;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-family: 'Open Sans', sans-serif;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .back-button:hover {
+      background-color: #e14b65;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Nuestra Línea del Tiempo 🕰️</h1>
+
+  <div class="main-box">
+    <div class="scroll-container">
+      <img src="Precomp. 1_00545.jpg" alt="Línea de tiempo" class="timeline-image">
+    </div>
+  </div>
+
+  <a href="home.html" class="back-button">← Volver al Inicio</a>
+
+  <!-- Música -->
+  <audio id="music" autoplay loop style="display:none;">
+    <source src="Gustavo Cerati - Vivo (Official Audio) - GustavoCeratiVEVO.mp3" type="audio/mp3">
+  </audio>
+
+</body>
+</html>

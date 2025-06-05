@@ -5,448 +5,71 @@
   <title>Un Año Juntos</title>
   <link rel="stylesheet" href="Home style.css">
   <style>
-    /* Estilos exclusivos para el inicio */
-    #inicio {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: #ffe6e6;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    body {
+      background: linear-gradient(to bottom right, #faf8ef, #f5f2e7);
+      font-family: 'Playfair Display', serif;
       text-align: center;
-      z-index: 9999;
-      transition: opacity 1s ease;
-      font-family: 'Roboto', sans-serif;
+      padding: 50px;
     }
-  
-    #inicio.hidden {
-      opacity: 0;
-      pointer-events: none;
+
+    /* Mostrar menú de opciones desde el inicio */
+    #inicio, #menu-opciones {
+      display: none;
     }
-  
-    #inicio h1 {
-      font-size: 60px;
+
+    #menu-opciones.active {
+      display: block;
+    }
+
+    h1 {
       color: #ff6b81;
+      font-size: 48px;
       margin-bottom: 20px;
     }
-  
-    #inicio p {
-      font-size: 22px;
-      color: #333;
-      margin-bottom: 20px;
+
+    p {
+      font-size: 20px;
+      color: #444;
+      margin-bottom: 30px;
     }
-  
-    #inicio .start-button {
-      padding: 15px 30px;
-      font-size: 22px;
+
+    .section-link {
+      display: block;
+      width: 250px;
       background-color: #ff6b81;
       color: white;
+      text-decoration: none;
+      padding: 15px 30px;
+      margin: 10px auto;
+      border-radius: 30px;
+      font-size: 18px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
       border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background-color 0.6s ease;
-    }
-  
-    #inicio .start-button:hover {
-      background-color: #ff4d6d;
-    }
-  
-    /* Estilos para la galería integrada */
-    .gallery-section {
-      margin: 40px auto;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .gallery-title {
-      font-size: 28px;
-      color: #ff6b81;
-      margin-bottom: 20px;
-    }
-
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 15px;
-      padding: 15px;
-    }
-
-    .gallery-item {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
-      border: 2px solid #ffb8c6;
-    }
-
-    .gallery-item:hover {
-      transform: scale(1.03);
-      box-shadow: 0 5px 15px rgba(255, 107, 129, 0.3);
-    }
-
-    /* Modal para vista ampliada */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.9);
-    }
-
-    .modal-content {
-      display: block;
-      margin: auto;
-      max-width: 90%;
-      max-height: 90%;
-      margin-top: 5%;
-    }
-
-    .close {
-      position: absolute;
-      top: 20px;
-      right: 35px;
-      color: #ff6b81;
-      font-size: 40px;
-      font-weight: bold;
       cursor: pointer;
     }
 
-    /* Estilos para el contador */
-    .flip-clock-container {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin: 40px auto;
-      font-family: 'Courier New', monospace;
+    .section-link:hover {
+      background-color: #e14b65;
     }
-  
-    .time-section {
-      background: #fff;
-      padding: 18px 12px;
-      border-radius: 10px;
-      text-align: center;
-      width: 85px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transition: all 0.3s ease;
-    }
-  
-    .time-section span {
-      display: block;
-      font-size: 32px;
-      font-weight: bold;
-      color: #ff6b81;
-    }
-  
-    .label {
-      font-size: 13px;
-      color: #333;
-      letter-spacing: 1px;
-      margin-top: 4px;
-    }
-    #countdown-container {
-  text-align: center;
-  margin: 30px auto;
-  background-color: #fff5f8;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  color: #d6336c;
-  max-width: 600px;
-  font-family: 'Open Sans', sans-serif;
-}
-.roulette-container {
-  text-align: center;
-  margin-top: 40px;
-}
-
-.wheel-wrapper {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  margin: 0 auto;
-}
-
-#wheelCanvas {
-  border-radius: 50%;
-  border: 8px solid #ff6b81;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-
-.pointer {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 24px;
-  color: #d6336c;
-}
-
-.spin-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 18px;
-  background-color: #ff6b81;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.spin-button:hover {
-  background-color: #ff4d6d;
-}
-
-.result-text {
-  margin-top: 15px;
-  font-size: 18px;
-  color: #d6336c;
-  font-weight: bold;
-}
-
   </style>
 </head>
-<div class="music-toggle">
-  <input type="checkbox" id="toggle-music" checked onchange="toggleMusic()" />
-  <label for="toggle-music" class="slider"></label>
-  <span class="music-status">Música activada</span>
-</div>
-
 <body>
 
-  <!-- Pantalla de inicio -->
-  <div id="inicio">
-    <h1>¡Feliz año hermosa! ❤️</h1>
-    <p>Haz clic para comenzar 🎶</p>
-    <button class="start-button" onclick="iniciar()">Empezar</button>
-  </div>
+<!-- Música -->
+<audio id="music" loop autoplay>
+  <source src="Gustavo Cerati - Vivo (Official Audio) - GustavoCeratiVEVO.mp3" type="audio/mp3">
+</audio>
 
-  <!-- Audio -->
-  <audio id="music" loop>
-    <source src="Gustavo Cerati - Vivo (Official Audio) - GustavoCeratiVEVO.mp3" type="audio/mp3">
-    Tu navegador no soporta el elemento de audio.
-  </audio>
-
-  <!-- Contenido principal -->
-  <div id="contenido" style="display: none;">
-
-    <!-- Foto arriba a la izquierda -->
-    <div class="top-left-photo">
-      <img src="nosotros.jpg" alt="Nosotros">
-    </div>
-
-    <!-- Corazones flotantes -->
-    <div class="heart"></div>
-    <div class="heart"></div>
-    <div class="heart"></div>
-    <div class="heart"></div>
-    <div class="heart"></div>
-
-    <!-- Caja principal con scroll horizontal -->
-    <div class="main-box">
-      <div class="scroll-container">
-        <img src="Precomp. 1_00545.jpg" alt="Línea de tiempo" class="timeline-image">
-      </div>
-    </div>
-
-    <!-- Texto dedicado para ella -->
-    <div class="text-section">
-      <h1>Para la persona más hermosa 💖</h1>
-      <p>
-        Hace un año que te conozco y te amo como a nadie, nunca 💘 Sos hermosa, única, inigualable.
-        Recién cumplimos un año y espero cumplir 20, 30, 50, 80 años MASS Quiero vivir con vos para toda la vida. 😘
-        <br><br>
-        Con amor, <br>
-        Lorenzo 💘
-      </p>
-    </div>
-
-    <!-- Contador regresivo de 80 años -->
-    <div class="flip-clock-container">
-      <div class="time-section"><span id="years">00</span><div class="label">AÑOS</div></div>
-      <div class="time-section"><span id="months">00</span><div class="label">MESES</div></div>
-      <div class="time-section"><span id="days">00</span><div class="label">DÍAS</div></div>
-      <div class="time-section"><span id="hours">00</span><div class="label">HORAS</div></div>
-      <div class="time-section"><span id="minutes">00</span><div class="label">MINUTOS</div></div>
-      <div class="time-section"><span id="seconds">00</span><div class="label">SEGUNDOS</div></div>
-    </div>
-    <p style="text-align:center; color: #ff6b81; font-size: 18px;">Lo que nos queda por vivir juntos ❤️</p>
-<!-- Cuenta regresiva hasta el 14 de mayo de 2026 -->
-<div id="countdown-container">
-  <h2 style="color:#ff6b81;">Tu Proximo cumpleaños</h2>
-  <div id="countdown" style="font-size: 20px; margin-top: 10px;"></div>
+<!-- Menú de opciones visible directamente -->
+<div id="menu-opciones" class="active">
+  <h1>Elige donde </h1>
+  <a class="section-link" href="linea.html">Línea del tiempo</a>
+  <a class="section-link" href="contador.html">Contadores</a>
+  <a class="section-link" href="galeria.html">Galería de fotos</a>
+  <a class="section-link" href="mensaje.html">Mensaje especial</a>
+  <a class="section-link" href="ruleta.html">¿Qué comemos?</a>
 </div>
-
-    <!-- Galería de fotos integrada -->
-    <div class="gallery-section">
-      <h2 class="gallery-title">Nuestros con IA 😅</h2>
-      <div class="gallery-grid">
-        <img src="foto1.jpg" alt="Foto 1" class="gallery-item" onclick="openModal(this)">
-        <img src="foto2.jpg" alt="Foto 2" class="gallery-item" onclick="openModal(this)">
-        <img src="foto3.jpg" alt="Foto 3" class="gallery-item" onclick="openModal(this)">
-        <img src="foto4.jpg" alt="Foto 4" class="gallery-item" onclick="openModal(this)">
-        <img src="foto5.jpg" alt="Foto 5" class="gallery-item" onclick="openModal(this)">
-      </div>
-    </div>
-<div class="roulette-container">
-  <h2>¿Qué comemos hoy? 🎲</h2>
-  <div class="wheel-wrapper">
-    <canvas id="wheelCanvas" width="300" height="300"></canvas>
-    <div class="pointer">▲</div>
-  </div>
-  <button class="spin-button" onclick="spinWheel()">¡Girar!</button>
-  <p id="result" class="result-text"></p>
-</div>
-
-
-
-    <!-- Modal para vista ampliada -->
-    <div id="imageModal" class="modal">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <img class="modal-content" id="modalImage">
-    </div>
-
-  </div>
-
-  <script src="JS home.js"></script>
-
-  <script>
-    function iniciar() {
-      document.getElementById('music').play();
-      const inicio = document.getElementById('inicio');
-      inicio.classList.add('hidden');
-      setTimeout(() => {
-        inicio.style.display = 'none';
-        document.getElementById('contenido').style.display = 'block';
-      }, 1000);
-    }
-    
-    // Control de música
-    function toggleMusic() {
-      const audio = document.getElementById('music');
-      const status = document.querySelector('.music-status');
-
-      if (audio.paused) {
-        audio.play();
-        status.innerText = 'Música activada';
-      } else {
-        audio.pause();
-        status.innerText = 'Música desactivada';
-      }
-    }
-
-    // Galería modal
-    function openModal(img) {
-      const modal = document.getElementById('imageModal');
-      const modalImg = document.getElementById('modalImage');
-      modal.style.display = "block";
-      modalImg.src = img.src;
-    }
-
-    function closeModal() {
-      document.getElementById('imageModal').style.display = "none";
-    }
-  </script>
-  <script>
-const options = ["Bon o bon", "Pancho", "Masitas", "Gomitas", "Tu elección"];
-const colors = ["#ffb3ba", "#ffdfba", "#ffffba", "#baffc9", "#bae1ff"];
-let startAngle = 0;
-let arc = Math.PI * 2 / options.length;
-let spinTimeout = null;
-let spinAngleStart = 0;
-let spinTime = 0;
-let spinTimeTotal = 0;
-const canvas = document.getElementById("wheelCanvas");
-const ctx = canvas.getContext("2d");
-
-function drawRouletteWheel() {
-  ctx.clearRect(0, 0, 300, 300); // Borrar el canvas
-  for (let i = 0; i < options.length; i++) {
-    const angle = startAngle + i * arc;
-    ctx.fillStyle = colors[i];
-    ctx.beginPath();
-    ctx.moveTo(150, 150);
-    ctx.arc(150, 150, 150, angle, angle + arc, false);
-    ctx.lineTo(150, 150);
-    ctx.fill();
-
-    // Dibuja el texto alrededor de la rueda
-    ctx.save();
-    ctx.fillStyle = "black";
-    ctx.translate(150 + Math.cos(angle + arc / 2) * 100, 150 + Math.sin(angle + arc / 2) * 100);
-    ctx.rotate(angle + arc / 2);
-    ctx.fillText(options[i], -ctx.measureText(options[i]).width / 2, 0);
-    ctx.restore();
-  }
-
-  // Dibuja el texto en el centro
-  ctx.save();
-  ctx.fillStyle = "black";
-  ctx.font = "24px Arial"; // Ajusta el tamaño de la fuente
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("¡Gira la ruleta!", 150, 150); // Texto en el centro
-  ctx.restore();
-}
-
-function rotateWheel() {
-  spinAngleStart *= 0.97; // Reducir la velocidad de giro
-  if (spinTime >= spinTimeTotal || spinAngleStart < 0.1) {
-    const degrees = startAngle * 180 / Math.PI + 90;
-    const index = Math.floor((360 - (degrees % 360)) / (360 / options.length)) % options.length;
-    document.getElementById("result").innerText = "Resultado: " + options[index];
-    return;
-  }
-
-  startAngle += (spinAngleStart * Math.PI / 180);
-  spinTime += 30;
-  drawRouletteWheel();
-  spinTimeout = setTimeout(rotateWheel, 30);
-}
-
-function spinWheel() {
-  spinAngleStart = Math.random() * 10 + 30;  // Un valor más alto al principio para la velocidad
-  spinTime = 0;
-  spinTimeTotal = Math.random() * 1000 + 3000;
-  rotateWheel();
-}
-
-drawRouletteWheel();
-</script>
-<script>
-  function updateCountdown() {
-    const targetDate = new Date("2026-05-14T00:00:00").getTime();
-    const now = new Date().getTime();
-    const difference = targetDate - now;
-
-    if (difference <= 0) {
-      document.getElementById("countdown").innerHTML = "¡Ya ha llegado el 14 de mayo de 2026!";
-      return;
-    }
-
-    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((difference / (1000 * 60)) % 60);
-    const seconds = Math.floor((difference / 1000) % 60);
-
-    document.getElementById("countdown").innerHTML =
-      `${days} días, ${hours} horas, ${minutes} minutos, ${seconds} segundos`;
-  }
-
-  setInterval(updateCountdown, 1000);
-  updateCountdown();
-</script>
-
-</body>
-</html>
 
 </body>
 </html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>¿Qué comemos hoy?</title>
+  <link rel="stylesheet" href="Home style.css" />
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #faf8ef, #f5f2e7);
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+      padding: 60px 20px;
+      user-select: none;
+    }
+
+    h1 {
+      color: #ff6b81;
+      margin-bottom: 30px;
+      font-size: 36px;
+    }
+
+    .wheel-wrapper {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      margin: 0 auto;
+      box-shadow: 0 10px 30px rgba(255, 107, 129, 0.3);
+      border-radius: 50%;
+      background: white;
+    }
+
+    #wheelCanvas {
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(255, 107, 129, 0.6);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .pointer {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 40px;
+      color: #d6336c;
+      text-shadow: 0 0 6px #d6336c;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .spin-button {
+      margin-top: 30px;
+      padding: 14px 32px;
+      font-size: 20px;
+      background-color: #ff6b81;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 6px 14px rgba(255, 107, 129, 0.5);
+      user-select: none;
+    }
+
+    .spin-button:hover:not(:disabled) {
+      background-color: #e14b65;
+      transform: scale(1.05);
+    }
+
+    .spin-button:disabled {
+      background-color: #ffb3ba;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .result-text {
+      margin-top: 24px;
+      font-size: 22px;
+      color: #d6336c;
+      font-weight: 700;
+      min-height: 28px;
+      user-select: none;
+    }
+
+    .back-button {
+      display: inline-block;
+      background: #ff6b81;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 16px;
+      text-decoration: none;
+      margin-top: 40px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      user-select: none;
+    }
+
+    .back-button:hover {
+      background-color: #e14b65;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎯 ¿Qué comemos hoy?</h1>
+
+  <div class="wheel-wrapper">
+    <canvas id="wheelCanvas" width="320" height="320" aria-label="Ruleta de opciones"></canvas>
+    <div class="pointer" aria-hidden="true">▲</div>
+  </div>
+
+  <button class="spin-button" id="spinButton" aria-label="Girar la ruleta">¡Girar!</button>
+  <p id="result" class="result-text" aria-live="polite" aria-atomic="true">Resultado: ...</p>
+
+  <a href="home.html" class="back-button">← Volver al Inicio</a>
+
+  <!-- Música de fondo -->
+  <audio id="music" autoplay loop style="display:none;">
+    <source src="Gustavo Cerati - Vivo (Official Audio) - GustavoCeratiVEVO.mp3" type="audio/mp3" />
+  </audio>
+
+  <!-- Sonido de giro -->
+  <audio id="spin-sound" src="spin.mp3" preload="auto"></audio>
+
+  <!-- Sonido al detenerse -->
+  <audio id="ding-sound" src="ding.mp3" preload="auto"></audio>
+
+  <script>
+    const options = [
+      " Bon o Bon",
+      " Pancho",
+      " Masitas",
+      " Gomitas",
+      " Tu elección"
+    ];
+    const colors = [
+      "#ffb3ba",
+      "#ffdfba",
+      "#ffffba",
+      "#baffc9",
+      "#bae1ff",
+      "#e3baff",
+      "#ffcce7",
+      "#d3f6fc"
+    ];
+
+    const canvas = document.getElementById("wheelCanvas");
+    const ctx = canvas.getContext("2d");
+    const spinButton = document.getElementById("spinButton");
+    const resultText = document.getElementById("result");
+    const spinSound = document.getElementById("spin-sound");
+    const dingSound = document.getElementById("ding-sound");
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const outsideRadius = 150;
+    const textRadius = 110;
+    const insideRadius = 50;
+
+    let startAngle = 0;
+    const arc = (2 * Math.PI) / options.length;
+    let spinning = false;
+
+    function drawWheel() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw wheel slices
+      for (let i = 0; i < options.length; i++) {
+        const angle = startAngle + i * arc;
+        ctx.fillStyle = colors[i];
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, outsideRadius, angle, angle + arc, false);
+        ctx.lineTo(centerX, centerY);
+        ctx.fill();
+
+        // Draw text
+        ctx.save();
+        ctx.fillStyle = "#333";
+        ctx.font = "bold 16px Arial";
+        ctx.translate(
+          centerX + Math.cos(angle + arc / 2) * textRadius,
+          centerY + Math.sin(angle + arc / 2) * textRadius
+        );
+        ctx.rotate(angle + arc / 2 + Math.PI / 2);
+        const text = options[i];
+        ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
+        ctx.restore();
+      }
+
+      // Draw center circle
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, insideRadius, 0, 2 * Math.PI, false);
+      ctx.fillStyle = "#ff6b81";
+      ctx.shadowColor = "rgba(255, 107, 129, 0.7)";
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Draw center circle text
+      ctx.fillStyle = "white";
+      ctx.font = "bold 20px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Girar", centerX, centerY);
+    }
+
+    // Easing function for smooth acceleration and deceleration
+    function easeOut(t) {
+      return t * (2 - t);
+    }
+
+    let animationFrameId;
+    let startTime;
+    let duration;
+    let targetAngle;
+
+    function animateSpin(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = easeOut(progress);
+
+      startAngle = (targetAngle * easedProgress) % (2 * Math.PI);
+      drawWheel();
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(animateSpin);
+      } else {
+        spinning = false;
+        spinButton.disabled = false;
+        dingSound.play();
+
+        // Calcular el índice de la opción ganadora
+        const degrees = (startAngle * 180) / Math.PI;
+        const index = Math.floor(
+          options.length - (degrees / (360 / options.length)) % options.length
+        ) % options.length;
+
+        resultText.textContent = "Resultado: " + options[index];
+      }
+    }
+
+    function spinWheel() {
+      if (spinning) return;
+
+      spinning = true;
+      spinButton.disabled = true;
+      resultText.textContent = "Girando...";
+
+      // Randommente entre 3 y 6 vueltas completas + un extra para que no caiga siempre en la misma opción
+      const spins = Math.floor(Math.random() * 3) + 3;
+      const randomIndex = Math.floor(Math.random() * options.length);
+      targetAngle = (spins * 2 * Math.PI) + (randomIndex * arc) + arc / 2;
+
+      spinSound.currentTime = 0;
+      spinSound.play();
+
+      startTime = null;
+      duration = 5000; // 5 segundos de animación
+      animationFrameId = requestAnimationFrame(animateSpin);
+    }
+
+    // Dibujar ruleta inicialmente
+    drawWheel();
+
+    spinButton.addEventListener("click", spinWheel);
+  </script>
+
+</body>
+</html>
