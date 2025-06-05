@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Galería Supabase</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       background: #fdf5f7;
@@ -11,13 +11,17 @@
       padding: 40px;
       text-align: center;
     }
-    h1 { color: #ff6b81; margin-bottom: 20px; }
+    h1 {
+      color: #ff6b81;
+      margin-bottom: 20px;
+    }
     input, button {
       padding: 10px;
       margin: 10px;
       border-radius: 8px;
       border: 1px solid #ccc;
       font-family: inherit;
+      cursor: pointer;
     }
     .gallery-grid {
       display: grid;
@@ -38,57 +42,74 @@
 </head>
 <body>
 
-  <h1>Galeria de fotos /h1>
+  <h1>Galería de fotos</h1>
 
-  <input type="file" id="fileInput">
-  <button onclick="uploadPhoto()">Subir Foto</button>
+  <input type="file" id="fileInput" accept="image/*" />
+  <button id="uploadBtn">Subir Foto</button>
 
   <div class="gallery-grid" id="gallery"></div>
 
   <script>
+    // Configura tus credenciales Supabase
     const supabaseUrl = "https://sirfkieteanyrdifckxr.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpcmZraWV0ZWFueXJkaWZja3hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxNjMyNTAsImV4cCI6MjA2NDczOTI1MH0.mcm2aJ_kLMTaLM_81bVlBWYxBZvr5xEnXeBj70N-Gfw";
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
     const BUCKET = "fotos";
 
-    async function uploadPhoto() {
+    const uploadBtn = document.getElementById("uploadBtn");
+    uploadBtn.addEventListener("click", async () => {
       const fileInput = document.getElementById("fileInput");
       const file = fileInput.files[0];
-      if (!file) return alert("Seleccioná una imagen");
 
-      const filePath = Date.now() + "-" + file.name;
-
-      const { error } = await supabase.storage.from(BUCKET).upload(filePath, file);
-      if (error) {
-        alert("Error al subir 😢");
-        console.error(error);
+      if (!file) {
+        alert("Seleccioná una imagen primero.");
         return;
       }
 
-      alert("Foto subida ✅");
-      loadGallery();
-    }
+      const filePath = `${Date.now()}-${file.name}`;
+
+      try {
+        const { error } = await supabase.storage.from(BUCKET).upload(filePath, file);
+
+        if (error) throw error;
+
+        alert("Foto subida correctamente!");
+        fileInput.value = ""; // limpiar input
+        loadGallery();
+      } catch (error) {
+        console.error("Error al subir la foto:", error.message);
+        alert("Error al subir la foto. Revisa la consola para más detalles.");
+      }
+    });
 
     async function loadGallery() {
-      const { data, error } = await supabase.storage.from(BUCKET).list("", { limit: 100 });
-      if (error) {
-        console.error("Error al listar imágenes", error);
-        return;
-      }
+      try {
+        const { data, error } = await supabase.storage.from(BUCKET).list("", { limit: 100 });
 
-      const gallery = document.getElementById("gallery");
-      gallery.innerHTML = "";
+        if (error) throw error;
 
-      for (const item of data) {
-        const { data: urlData } = await supabase.storage.from(BUCKET).getPublicUrl(item.name);
-        const img = document.createElement("img");
-        img.src = urlData.publicUrl;
-        gallery.appendChild(img);
+        const gallery = document.getElementById("gallery");
+        gallery.innerHTML = "";
+
+        for (const item of data) {
+          const { data: urlData, error: urlError } = supabase.storage.from(BUCKET).getPublicUrl(item.name);
+          if (urlError) {
+            console.error("Error al obtener la URL:", urlError);
+            continue;
+          }
+          const img = document.createElement("img");
+          img.src = urlData.publicUrl;
+          gallery.appendChild(img);
+        }
+      } catch (error) {
+        console.error("Error al cargar imágenes:", error.message);
       }
     }
 
+    // Cargar galería al iniciar
     loadGallery();
   </script>
 
 </body>
 </html>
+
