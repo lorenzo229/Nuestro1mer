@@ -2,22 +2,42 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Galería Back4App en GitHub Pages</title>
+  <title>Galería con Back4App</title>
   <script src="https://unpkg.com/parse/dist/parse.min.js"></script>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 40px; }
-    img { max-width: 150px; margin: 10px; border-radius: 10px; border: 2px solid #ddd; }
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background-color: #f9f9f9;
+      padding: 40px;
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px;
+    }
+    img {
+      max-width: 200px;
+      margin: 10px;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+    }
+    .image-container {
+      display: inline-block;
+      margin: 10px;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Galería con Back4App</h1>
-  <input type="file" id="fileInput" />
+  <h1>📸 Galería con Back4App</h1>
+
+  <input type="file" id="fileInput" accept="image/*" />
   <button onclick="uploadImage()">Subir Imagen</button>
 
   <div id="imageGallery"></div>
 
   <script>
+    // Inicializar Parse con tus credenciales de Back4App
     Parse.initialize("7nGk94z40oBPgxJ9zErfHb8CFDeooj6nVA7VH4JB", "RaZiYSLq7yd5wra3UBHeeOZZ6C45yCzwtj5tRPuX");
     Parse.serverURL = "https://parseapi.back4app.com/";
 
@@ -27,22 +47,26 @@
         alert("Seleccioná una imagen primero.");
         return;
       }
+
       const file = fileInput.files[0];
       const parseFile = new Parse.File(file.name, file);
 
       try {
         await parseFile.save();
 
+        // Crear el objeto en la clase "ImageObject" (creala en Back4App si no existe)
         const ImageObject = Parse.Object.extend("ImageObject");
         const imageObject = new ImageObject();
         imageObject.set("image", parseFile);
+
         await imageObject.save();
 
         alert("Imagen subida correctamente.");
-        displayImages();
+        fileInput.value = ""; // limpiar input
+        displayImages(); // actualizar galería
       } catch (error) {
         console.error("Error al subir:", error);
-        alert("Error al subir la imagen.");
+        alert("Ocurrió un error al subir la imagen.");
       }
     }
 
@@ -55,21 +79,29 @@
 
       try {
         const results = await query.find();
-        results.forEach(obj => {
+        results.forEach((obj) => {
           const file = obj.get("image");
-          const url = file.url();
+          if (file) {
+            const url = file.url();
 
-          const img = document.createElement("img");
-          img.src = url;
-          imageGallery.appendChild(img);
+            const container = document.createElement("div");
+            container.classList.add("image-container");
+
+            const img = document.createElement("img");
+            img.src = url;
+            img.alt = "Imagen subida";
+            container.appendChild(img);
+
+            imageGallery.appendChild(container);
+          }
         });
       } catch (error) {
         console.error("Error al cargar imágenes:", error);
       }
     }
 
+    // Cargar imágenes al iniciar la página
     displayImages();
   </script>
-
 </body>
 </html>
