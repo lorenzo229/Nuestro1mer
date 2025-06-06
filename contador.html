@@ -1,15 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Contadores de Amor</title>
-  <link rel="stylesheet" href="Home style.css">
+  <link rel="stylesheet" href="Home style.css" />
   <style>
-    body {
-      background: linear-gradient(135deg, #f5f5f5, #b0b0b0);
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
       font-family: 'Playfair Display', serif;
+      background: linear-gradient(135deg, #f5f5f5, #b0b0b0);
+      display: flex;
+      flex-direction: column;
+    }
+
+    body {
+      flex: 1;
+    }
+
+    main {
+      flex: 1;
       padding: 40px 20px;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     h1 {
@@ -65,22 +85,55 @@
       display: inline-block;
       background: #ff6b81;
       color: #fff;
-      padding: 12px 24px;
+      padding: 18px 36px;
       border-radius: 30px;
-      font-size: 16px;
+      font-size: 18px;
       text-decoration: none;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      margin-top: 30px;
+      margin: 40px auto 0;
     }
 
     .back-button:hover {
       background-color: #e14b65;
     }
+
+    footer {
+      font-size: 12px;
+      color: #555;
+      text-align: center;
+      padding: 20px 10px;
+      background: rgba(255, 255, 255, 0.2);
+      line-height: 1.4;
+      font-family: Arial, sans-serif;
+    }
+
+    footer a {
+      color: #555;
+      text-decoration: underline;
+      margin: 0 4px;
+    }
+
+    @media (max-width: 600px) {
+      .time-section {
+        width: 70px;
+        padding: 16px 8px;
+      }
+
+      .time-section span {
+        font-size: 24px;
+      }
+
+      .back-button {
+        font-size: 16px;
+        padding: 16px 24px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <h1> ¿Cuánto tiempo llevamos juntos?</h1>
+<main>
+  <h1>¿Cuánto tiempo llevamos juntos?</h1>
 
   <div class="flip-clock-container">
     <div class="time-section"><span id="years">00</span><div class="label">AÑOS</div></div>
@@ -92,134 +145,136 @@
   </div>
 
   <div class="countdown-container">
-    <h2> Próximo Cumpleaños de Mia (14 de mayo)</h2>
+    <h2>Próximo Cumpleaños de Mia (14 de mayo)</h2>
     <div id="countdown"></div>
   </div>
 
   <div class="countdown-container">
-    <h2>Proximo Cumpleaños Lorenzo (19 de septiembre)</h2>
+    <h2>Próximo Cumpleaños Lorenzo (19 de septiembre)</h2>
     <div id="countdown2"></div>
   </div>
 
   <a href="home.html" class="back-button">← Volver al Inicio</a>
+</main>
 
-  <!-- Música -->
-  <audio id="music" autoplay loop style="display:none;">
-    <source src="Gustavo Cerati - Vivo (Official Audio) - GustavoCeratiVEVO.mp3" type="audio/mp3">
-  </audio>
+<!-- Música -->
+<audio id="music" autoplay loop style="display: none;">
+  <source src="Gustavo Cerati - Vivo (Official Audio) - GustavoCeratiVEVO.mp3" type="audio/mp3">
+</audio>
 
-  <!-- Scripts -->
-  <script>
-    function actualizarContador() {
-      const ahora = new Date();
-      const inicio = new Date(2024, 4, 2, 11, 51, 0); // 2 de mayo 2024, 11:51 AM
-
-      let años = ahora.getFullYear() - inicio.getFullYear();
-      let meses = ahora.getMonth() - inicio.getMonth();
-      let días = ahora.getDate() - inicio.getDate();
-
-      if (días < 0) {
-        meses--;
-        const ultimoDiaMesAnterior = new Date(ahora.getFullYear(), ahora.getMonth(), 0).getDate();
-        días += ultimoDiaMesAnterior;
-      }
-
-      if (meses < 0) {
-        años--;
-        meses += 12;
-      }
-
-      const inicioMismoDia = new Date(
-        ahora.getFullYear(),
-        ahora.getMonth(),
-        ahora.getDate(),
-        inicio.getHours(),
-        inicio.getMinutes(),
-        inicio.getSeconds()
-      );
-
-      let diffTiempo = ahora - inicioMismoDia;
-      if (diffTiempo < 0) {
-        días--;
-        diffTiempo += 24 * 60 * 60 * 1000;
-      }
-
-      const horas = Math.floor(diffTiempo / (1000 * 60 * 60));
-      const minutos = Math.floor((diffTiempo % (1000 * 60 * 60)) / (1000 * 60));
-      const segundos = Math.floor((diffTiempo % (1000 * 60)) / 1000);
-
-      document.getElementById("years").textContent = String(años).padStart(2, '0');
-      document.getElementById("months").textContent = String(meses).padStart(2, '0');
-      document.getElementById("days").textContent = String(días).padStart(2, '0');
-      document.getElementById("hours").textContent = String(horas).padStart(2, '0');
-      document.getElementById("minutes").textContent = String(minutos).padStart(2, '0');
-      document.getElementById("seconds").textContent = String(segundos).padStart(2, '0');
-    }
-
-    function updateCountdown() {
-      const targetDate = new Date("2026-05-14T00:00:00").getTime();
-      const now = new Date().getTime();
-      const difference = targetDate - now;
-
-      if (difference <= 0) {
-        document.getElementById("countdown").innerHTML = "🎉 ¡Ya llegó tu cumpleaños!";
-        return;
-      }
-
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((difference / (1000 * 60)) % 60);
-      const seconds = Math.floor((difference / 1000) % 60);
-
-      document.getElementById("countdown").innerHTML =
-        `${days} días, ${hours} horas, ${minutes} minutos, ${seconds} segundos`;
-    }
-
-    function updateCountdown2() {
-      const now = new Date();
-
-      let year = now.getFullYear();
-      let targetDate2 = new Date(year, 8, 19, 11, 37, 0); // Septiembre es mes 8 (0 index)
-
-      if (now > targetDate2) {
-        targetDate2 = new Date(year + 1, 8, 19, 11, 37, 0);
-      }
-
-      const difference = targetDate2.getTime() - now.getTime();
-
-      if (difference <= 0) {
-        document.getElementById("countdown2").innerHTML = "🎉 ¡El evento ha llegado!";
-        return;
-      }
-
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((difference / (1000 * 60)) % 60);
-      const seconds = Math.floor((difference / 1000) % 60);
-
-      document.getElementById("countdown2").innerHTML =
-        `${days} días, ${hours} horas, ${minutes} minutos, ${seconds} segundos`;
-    }
-
-    setInterval(actualizarContador, 1000);
-    setInterval(updateCountdown, 1000);
-    setInterval(updateCountdown2, 1000);
-
-    actualizarContador();
-    updateCountdown();
-    updateCountdown2();
-  </script>
-<footer style="font-size: 12px; color: #555; margin-top: 60px; line-height: 1.4; max-width: 600px; margin-left: auto; margin-right: auto; text-align: center; font-family: Arial, sans-serif;">
-  <p><strong>Disponible en:</strong> Celulares/PC/Netboks/p>
+<footer>
+  <p><strong>Disponible en:</strong> Celulares / PC / Netbooks</p>
   <p><em>Creado por Lorenzo Pierresteguy</em><br>
-  En este Proyecto se usaron ayudas como Google Sheets ,cloudinary y fue subida a github.</p>
+     En este Proyecto se usaron ayudas como Google Sheets, Cloudinary y fue subido a GitHub.</p>
   <p>
-    <a href="#" style="color: #555; text-decoration: underline;">Información corporativa</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Privacidad</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Ajustes de cookies</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Política de cookies</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Legal</a>
+    <a href="#">Información corporativa</a> | 
+    <a href="#">Privacidad</a> | 
+    <a href="#">Ajustes de cookies</a> | 
+    <a href="#">Política de cookies</a> | 
+    <a href="#">Legal</a>
   </p>
-  <p>Pagina exclusivamente para  Mia arias </p>
+  <p>Página exclusivamente para Mia Arias ❤️</p>
+</footer>
+
+<script>
+  function actualizarContador() {
+    const ahora = new Date();
+    const inicio = new Date(2024, 4, 2, 11, 51, 0);
+
+    let años = ahora.getFullYear() - inicio.getFullYear();
+    let meses = ahora.getMonth() - inicio.getMonth();
+    let días = ahora.getDate() - inicio.getDate();
+
+    if (días < 0) {
+      meses--;
+      const ultimoDiaMesAnterior = new Date(ahora.getFullYear(), ahora.getMonth(), 0).getDate();
+      días += ultimoDiaMesAnterior;
+    }
+
+    if (meses < 0) {
+      años--;
+      meses += 12;
+    }
+
+    const inicioMismoDia = new Date(
+      ahora.getFullYear(),
+      ahora.getMonth(),
+      ahora.getDate(),
+      inicio.getHours(),
+      inicio.getMinutes(),
+      inicio.getSeconds()
+    );
+
+    let diffTiempo = ahora - inicioMismoDia;
+    if (diffTiempo < 0) {
+      días--;
+      diffTiempo += 24 * 60 * 60 * 1000;
+    }
+
+    const horas = Math.floor(diffTiempo / (1000 * 60 * 60));
+    const minutos = Math.floor((diffTiempo % (1000 * 60 * 60)) / (1000 * 60));
+    const segundos = Math.floor((diffTiempo % (1000 * 60)) / 1000);
+
+    document.getElementById("years").textContent = String(años).padStart(2, '0');
+    document.getElementById("months").textContent = String(meses).padStart(2, '0');
+    document.getElementById("days").textContent = String(días).padStart(2, '0');
+    document.getElementById("hours").textContent = String(horas).padStart(2, '0');
+    document.getElementById("minutes").textContent = String(minutos).padStart(2, '0');
+    document.getElementById("seconds").textContent = String(segundos).padStart(2, '0');
+  }
+
+  function updateCountdown() {
+    const targetDate = new Date("2026-05-14T00:00:00").getTime();
+    const now = new Date().getTime();
+    const difference = targetDate - now;
+
+    if (difference <= 0) {
+      document.getElementById("countdown").innerHTML = "🎉 ¡Ya llegó tu cumpleaños!";
+      return;
+    }
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((difference / (1000 * 60)) % 60);
+    const seconds = Math.floor((difference / 1000) % 60);
+
+    document.getElementById("countdown").innerHTML =
+      `${days} días, ${hours} horas, ${minutes} minutos, ${seconds} segundos`;
+  }
+
+  function updateCountdown2() {
+    const now = new Date();
+    let year = now.getFullYear();
+    let targetDate2 = new Date(year, 8, 19, 11, 37, 0);
+
+    if (now > targetDate2) {
+      targetDate2 = new Date(year + 1, 8, 19, 11, 37, 0);
+    }
+
+    const difference = targetDate2.getTime() - now.getTime();
+
+    if (difference <= 0) {
+      document.getElementById("countdown2").innerHTML = "🎉 ¡El evento ha llegado!";
+      return;
+    }
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((difference / (1000 * 60)) % 60);
+    const seconds = Math.floor((difference / 1000) % 60);
+
+    document.getElementById("countdown2").innerHTML =
+      `${days} días, ${hours} horas, ${minutes} minutos, ${seconds} segundos`;
+  }
+
+  setInterval(actualizarContador, 1000);
+  setInterval(updateCountdown, 1000);
+  setInterval(updateCountdown2, 1000);
+
+  actualizarContador();
+  updateCountdown();
+  updateCountdown2();
+</script>
+
 </body>
 </html>
