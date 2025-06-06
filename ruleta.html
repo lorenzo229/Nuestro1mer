@@ -1,86 +1,97 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>¿Qué comemos hoy?</title>
-  <link rel="stylesheet" href="Home style.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      background: linear-gradient(to bottom right, #faf8ef, #f5f2e7);
-      font-family: 'Playfair Display', serif;
-      text-align: center;
-      padding: 60px 20px;
-      user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #f5f5f5, #b0b0b0);
+      font-family: 'Arial', sans-serif;
     }
 
     h1 {
       color: #ff6b81;
-      margin-bottom: 30px;
-      font-size: 36px;
+      margin-bottom: 20px;
+      font-size: 32px;
     }
 
-    .wheel-wrapper {
+    .contenedor-ruleta {
       position: relative;
-      width: 320px;
-      height: 320px;
-      margin: 0 auto;
-      box-shadow: 0 10px 30px rgba(255, 107, 129, 0.3);
-      border-radius: 50%;
-      background: white;
     }
 
-    #wheelCanvas {
-      border-radius: 50%;
-      box-shadow: 0 0 15px rgba(255, 107, 129, 0.6);
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .pointer {
+    .contenedor-ruleta::before {
+      content: "▲";
+      font-size: 40px;
+      color: #000;
       position: absolute;
-      top: -25px;
+      z-index: 99999;
+      top: -40px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 40px;
-      color: #d6336c;
-      text-shadow: 0 0 6px #d6336c;
       pointer-events: none;
-      user-select: none;
     }
 
-    .spin-button {
-      margin-top: 30px;
-      padding: 14px 32px;
-      font-size: 20px;
+    .ruleta {
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ruleta::before {
+      content: "";
+      width: 100px;
+      height: 100px;
       background-color: #ff6b81;
-      color: white;
-      border: none;
-      border-radius: 30px;
+      position: absolute;
+      z-index: 9999;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      box-shadow: 0 6px 14px rgba(255, 107, 129, 0.5);
-      user-select: none;
     }
 
-    .spin-button:hover:not(:disabled) {
-      background-color: #e14b65;
-      transform: scale(1.05);
+    .opcion {
+      border: 0 solid transparent;
+      position: absolute;
+      transform-origin: top center;
+      top: 50%;
     }
 
-    .spin-button:disabled {
-      background-color: #ffb3ba;
-      cursor: not-allowed;
-      box-shadow: none;
-      transform: none;
+    .opcion::before {
+      z-index: 99999;
+      position: absolute;
+      display: block;
+      text-align: center;
+      font-size: 20px;
+      color: #fff;
+      font-weight: bold;
+      font-family: sans-serif;
+      width: 40px;
+      line-height: 40px;
+      left: -20px;
+      margin-top: 125px;
+      transform: rotate(180deg);
     }
 
-    .result-text {
-      margin-top: 24px;
-      font-size: 22px;
+    #resultado {
+      margin-top: 20px;
+      font-size: 20px;
       color: #d6336c;
-      font-weight: 700;
-      min-height: 28px;
-      user-select: none;
+      font-weight: bold;
     }
 
     .back-button {
@@ -91,7 +102,7 @@
       border-radius: 30px;
       font-size: 16px;
       text-decoration: none;
-      margin-top: 40px;
+      margin-top: 30px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       user-select: none;
     }
@@ -102,171 +113,100 @@
   </style>
 </head>
 <body>
+  <h1>¿Qué comemos hoy?</h1>
 
-  <h1>🎯 ¿Qué comemos hoy?</h1>
-
-  <div class="wheel-wrapper">
-    <canvas id="wheelCanvas" width="320" height="320" aria-label="Ruleta de opciones"></canvas>
-    <div class="pointer" aria-hidden="true">▲</div>
+  <div class="contenedor-ruleta">
+    <div class="ruleta"></div>
   </div>
 
-  <button class="spin-button" id="spinButton" aria-label="Girar la ruleta">¡Girar!</button>
-  <p id="result" class="result-text" aria-live="polite" aria-atomic="true">Resultado: ...</p>
-
+  <div id="resultado">Resultado: ...</div>
   <a href="home.html" class="back-button">← Volver al Inicio</a>
 
-  <!-- Música de fondo -->
-  <audio id="music" autoplay loop style="display:none;">
-    <source src="Gustavo Cerati - Vivo (Official Audio) - GustavoCeratiVEVO.mp3" type="audio/mp3" />
-  </audio>
-
-  <!-- Sonido de giro -->
-  <audio id="spin-sound" src="spin.mp3" preload="auto"></audio>
-
-  <!-- Sonido al detenerse -->
-  <audio id="ding-sound" src="ding.mp3" preload="auto"></audio>
-
   <script>
-    const options = [
-      " Bon o Bon",
-      " Pancho",
-      " Masitas",
-      " Gomitas",
-      " Tu elección"
-    ];
-    const colors = [
-      "#ffb3ba",
-      "#ffdfba",
-      "#ffffba",
-      "#baffc9",
-      "#bae1ff",
-      "#e3baff",
-      "#ffcce7",
-      "#d3f6fc"
-    ];
+    $(document).ready(function () {
+      var tamanyoRuleta = 360;
+      var numeroCasillas = 8;
+      var opciones = ["Bon o Bon", "Pancho", "Masitas", "Gomitas", "Tu elección", "Pizza", "Tarta", "Ensalada"];
+      var anguloCasillas = 360 / numeroCasillas;
+      var grados = (180 - anguloCasillas) / 2;
+      var alturaCasilla = Math.tan(grados * Math.PI / 180) * (tamanyoRuleta / 2);
 
-    const canvas = document.getElementById("wheelCanvas");
-    const ctx = canvas.getContext("2d");
-    const spinButton = document.getElementById("spinButton");
-    const resultText = document.getElementById("result");
-    const spinSound = document.getElementById("spin-sound");
-    const dingSound = document.getElementById("ding-sound");
+      $(".ruleta").css({
+        'width': tamanyoRuleta + 'px',
+        'height': tamanyoRuleta + 'px'
+      });
 
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const outsideRadius = 150;
-    const textRadius = 110;
-    const insideRadius = 50;
+      $('head').append('<style id="afterNumero"></style>');
 
-    let startAngle = 0;
-    const arc = (2 * Math.PI) / options.length;
-    let spinning = false;
+      for (var i = 1; i <= numeroCasillas; i++) {
+        $(".ruleta").append('<div class="opcion opcion-' + i + '"></div>');
+        var clasS = '.opcion-' + i;
 
-    function drawWheel() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+        $(clasS).css({
+          'transform': 'rotate(' + anguloCasillas * i + 'deg)',
+          'border-bottom-color': getColor(i)
+        });
 
-      // Draw wheel slices
-      for (let i = 0; i < options.length; i++) {
-        const angle = startAngle + i * arc;
-        ctx.fillStyle = colors[i];
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, outsideRadius, angle, angle + arc, false);
-        ctx.lineTo(centerX, centerY);
-        ctx.fill();
+        $('#afterNumero').append('.opcion-' + i + '::before {content: "' + opciones[i - 1] + '"}');
 
-        // Draw text
-        ctx.save();
-        ctx.fillStyle = "#333";
-        ctx.font = "bold 16px Arial";
-        ctx.translate(
-          centerX + Math.cos(angle + arc / 2) * textRadius,
-          centerY + Math.sin(angle + arc / 2) * textRadius
+        $(".opcion")
+          .attr('data-content', i)
+          .attr('data-ancho', (tamanyoRuleta / 2) + 'px')
+          .attr('data-line', (tamanyoRuleta / 2) + 'px');
+      }
+
+      $(".opcion").css({
+        'border-bottom-width': alturaCasilla + 'px',
+        'border-right-width': (tamanyoRuleta / 2) + 'px',
+        'border-left-width': (tamanyoRuleta / 2) + 'px'
+      });
+
+      function getColor(index) {
+        const colores = ["#ffb3ba", "#ffdfba", "#ffffba", "#baffc9", "#bae1ff", "#e3baff", "#ffcce7", "#f5f2e7"];
+        return colores[(index - 1) % colores.length];
+      }
+
+      $('.ruleta::before').click(function () {
+        girar();
+      });
+
+      $('.ruleta').on('click', function () {
+        girar();
+      });
+
+      function girar() {
+        var num = Math.floor(Math.random() * numeroCasillas) + 1;
+        var numID = 'number-' + num;
+
+        $('#animacionRuleta').remove();
+        $('head').append('<style id="animacionRuleta">' +
+          '#' + numID + ' { animation-name: ' + numID + '; animation-duration: 5.8s; animation-fill-mode: forwards; animation-timing-function: cubic-bezier(0, 0.4, 0.4, 1.04); }' +
+          '@keyframes ' + numID + ' {' +
+          'from { transform: rotate(0); } ' +
+          'to { transform: rotate(' + (360 * 5 + (360 - anguloCasillas * num)) + 'deg); }' +
+          '}' +
+          '</style>'
         );
-        ctx.rotate(angle + arc / 2 + Math.PI / 2);
-        const text = options[i];
-        ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
-        ctx.restore();
+
+        $('.ruleta').removeAttr('id').attr('id', numID);
+
+        setTimeout(() => {
+          $("#resultado").text("Resultado: " + opciones[num - 1]);
+        }, 5800);
       }
-
-      // Draw center circle
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, insideRadius, 0, 2 * Math.PI, false);
-      ctx.fillStyle = "#ff6b81";
-      ctx.shadowColor = "rgba(255, 107, 129, 0.7)";
-      ctx.shadowBlur = 10;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // Draw center circle text
-      ctx.fillStyle = "white";
-      ctx.font = "bold 20px Arial";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("Girar", centerX, centerY);
-    }
-
-    // Easing function for smooth acceleration and deceleration
-    function easeOut(t) {
-      return t * (2 - t);
-    }
-
-    let animationFrameId;
-    let startTime;
-    let duration;
-    let targetAngle;
-
-    function animateSpin(timestamp) {
-      if (!startTime) startTime = timestamp;
-      const elapsed = timestamp - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const easedProgress = easeOut(progress);
-
-      startAngle = (targetAngle * easedProgress) % (2 * Math.PI);
-      drawWheel();
-
-      if (progress < 1) {
-        animationFrameId = requestAnimationFrame(animateSpin);
-      } else {
-        spinning = false;
-        spinButton.disabled = false;
-        dingSound.play();
-
-        // Calcular el índice de la opción ganadora
-        const degrees = (startAngle * 180) / Math.PI;
-        const index = Math.floor(
-          options.length - (degrees / (360 / options.length)) % options.length
-        ) % options.length;
-
-        resultText.textContent = "Resultado: " + options[index];
-      }
-    }
-
-    function spinWheel() {
-      if (spinning) return;
-
-      spinning = true;
-      spinButton.disabled = true;
-      resultText.textContent = "Girando...";
-
-      // Randommente entre 3 y 6 vueltas completas + un extra para que no caiga siempre en la misma opción
-      const spins = Math.floor(Math.random() * 3) + 3;
-      const randomIndex = Math.floor(Math.random() * options.length);
-      targetAngle = (spins * 2 * Math.PI) + (randomIndex * arc) + arc / 2;
-
-      spinSound.currentTime = 0;
-      spinSound.play();
-
-      startTime = null;
-      duration = 5000; // 5 segundos de animación
-      animationFrameId = requestAnimationFrame(animateSpin);
-    }
-
-    // Dibujar ruleta inicialmente
-    drawWheel();
-
-    spinButton.addEventListener("click", spinWheel);
+    });
   </script>
-
+  <footer style="font-size: 12px; color: #555; margin-top: 60px; line-height: 1.4; max-width: 600px; margin-left: auto; margin-right: auto; text-align: center; font-family: Arial, sans-serif;">
+  <p><strong>Disponible en:</strong> Celulares/PC/Netboks/p>
+  <p><em>Creado por Lorenzo Pierresteguy</em><br>
+  En este Proyecto se usaron ayudas como Google Sheets ,cloudinary y fue subida a github.</p>
+  <p>
+    <a href="#" style="color: #555; text-decoration: underline;">Información corporativa</a> | 
+    <a href="#" style="color: #555; text-decoration: underline;">Privacidad</a> | 
+    <a href="#" style="color: #555; text-decoration: underline;">Ajustes de cookies</a> | 
+    <a href="#" style="color: #555; text-decoration: underline;">Política de cookies</a> | 
+    <a href="#" style="color: #555; text-decoration: underline;">Legal</a>
+  </p>
+  <p>Pagina exclusivamente para  Mia arias </p>
 </body>
 </html>
