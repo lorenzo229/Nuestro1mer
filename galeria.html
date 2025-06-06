@@ -5,16 +5,16 @@
   <title>Galería con Cloudinary y SheetDB</title>
   <style>
     body {
-      background: #fdf5f7;
+      background: linear-gradient(to bottom right, #faf8ef, #f5f2e7);
       font-family: 'Playfair Display', serif;
-      padding: 40px;
+      padding: 40px 20px;
       text-align: center;
     }
     h1 {
       color: #ff6b81;
       margin-bottom: 20px;
     }
-    input, button {
+    input[type="file"], button {
       padding: 10px;
       margin: 10px;
       border-radius: 8px;
@@ -22,11 +22,23 @@
       font-family: inherit;
       cursor: pointer;
     }
+    .upload-button {
+      background-color: #ff6b81;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 30px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    .upload-button:hover {
+      background-color: #e14b65;
+    }
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 15px;
-      max-width: 800px;
+      max-width: 900px;
       margin: 30px auto;
     }
     .gallery-grid img {
@@ -37,21 +49,36 @@
       border: 2px solid #ffd6de;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
+    .back-button {
+      display: inline-block;
+      background: #ff6b81;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 16px;
+      text-decoration: none;
+      margin-top: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .back-button:hover {
+      background-color: #e14b65;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Galería de fotos</h1>
+  <h1>📸 Nuestra Galería (Cloudinary + SheetDB)</h1>
 
   <input type="file" id="fileInput" accept="image/*" />
-  <button id="uploadBtn">Subir Foto</button>
+  <button id="uploadBtn" class="upload-button">Subir Foto</button>
 
   <div class="gallery-grid" id="gallery"></div>
 
+  <a href="home.html" class="back-button">← Volver al Inicio</a>
+
   <script>
     const cloudName = 'doewcjxiq';
-    const uploadPreset = 'galeria_anonima'; // Tu preset sin firma
-
+    const uploadPreset = 'galeria_anonima';
     const SHEETDB_URL = 'https://sheetdb.io/api/v1/bp0czxw82222u';
 
     const fileInput = document.getElementById('fileInput');
@@ -76,7 +103,6 @@
       formData.append('upload_preset', uploadPreset);
 
       try {
-        // Subir a Cloudinary
         const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
           method: 'POST',
           body: formData
@@ -84,7 +110,6 @@
         const data = await res.json();
         const imageUrl = data.secure_url;
 
-        // Guardar URL en Google Sheets vía SheetDB
         await fetch(SHEETDB_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
