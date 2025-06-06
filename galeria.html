@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Galería con Supabase Storage</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <title>Galería con Supabase</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     body {
       background: #fdf5f7;
@@ -49,21 +49,20 @@
 
   <div class="gallery-grid" id="gallery"></div>
 
-  <!-- Inicialización de Supabase -->
   <script>
-    const supabaseUrl = "https://sirfkieteanyrdifckxr.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpcmZraWV0ZWFueXJkaWZja3hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxNjMyNTAsImV4cCI6MjA2NDczOTI1MH0.mcm2aJ_kLMTaLM_81bVlBWYxBZvr5xEnXeBj70N-Gfw";
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-    const BUCKET = "fotos12";
-  </script>
+    // Esperamos a que todo el contenido esté cargado
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Inicializa Supabase
+      const supabaseUrl = "https://sirfkieteanyrdifckxr.supabase.co";
+      const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpcmZraWV0ZWFueXJkaWZja3hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxNjMyNTAsImV4cCI6MjA2NDczOTI1MH0.mcm2aJ_kLMTaLM_81bVlBWYxBZvr5xEnXeBj70N-Gfw";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+      const BUCKET = "fotos12";
 
-  <!-- Lógica principal -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
       const fileInput = document.getElementById("fileInput");
       const uploadBtn = document.getElementById("uploadBtn");
       const gallery = document.getElementById("gallery");
 
+      // Subir imagen
       uploadBtn.addEventListener("click", async () => {
         if (fileInput.files.length === 0) {
           alert("Por favor, selecciona una imagen.");
@@ -85,16 +84,16 @@
         loadGallery();
       });
 
+      // Cargar galería
       async function loadGallery() {
         gallery.innerHTML = "";
-
-        const { data: files, error } = await supabase.storage.from(BUCKET).list("", { limit: 100 });
+        const { data, error } = await supabase.storage.from(BUCKET).list("", { limit: 100 });
         if (error) {
           console.error("Error al cargar galería:", error);
           return;
         }
 
-        for (const file of files) {
+        for (const file of data) {
           const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(file.name);
           const img = document.createElement("img");
           img.src = urlData.publicUrl;
@@ -102,6 +101,7 @@
         }
       }
 
+      // Cargar galería al abrir
       loadGallery();
     });
   </script>
