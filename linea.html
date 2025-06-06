@@ -1,25 +1,50 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Línea del Tiempo</title>
-  <link rel="stylesheet" href="Home style.css">
+  <link rel="stylesheet" href="Home style.css" />
   <style>
-    body {
-      background: linear-gradient(135deg, #f5f5f5, #b0b0b0);
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
       font-family: 'Playfair Display', serif;
+      background: linear-gradient(135deg, #f5f5f5, #b0b0b0);
+      display: flex;
+      flex-direction: column;
+    }
+
+    body {
+      flex: 1;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding-top: 40px;
+    }
+
+    h1 {
+      color: #ff6b81;
+      margin-bottom: 20px;
       text-align: center;
     }
 
     .main-box {
-      max-width: 90%;
+      width: 90%;
       background-color: #ffffff;
       border: 1px solid #ddd;
       border-radius: 10px;
       box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.05);
       padding: 30px;
-      margin: 40px auto;
+      margin: 20px auto;
     }
 
     .scroll-container {
@@ -44,58 +69,89 @@
       object-fit: cover;
     }
 
-    h1 {
-      color: #ff6b81;
-      margin-bottom: 20px;
-    }
-
     .back-button {
       display: inline-block;
       background: #ff6b81;
       color: #fff;
-      padding: 12px 24px;
+      padding: 18px 36px;
       border-radius: 30px;
-      font-size: 16px;
+      font-size: 18px;
       font-family: 'Open Sans', sans-serif;
       text-decoration: none;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       transition: all 0.3s ease;
-      margin-top: 20px;
+      margin: 30px auto;
+      text-align: center;
     }
 
     .back-button:hover {
       background-color: #e14b65;
     }
+
+    footer {
+      font-size: 12px;
+      color: #555;
+      text-align: center;
+      padding: 20px 10px;
+      background: rgba(255, 255, 255, 0.2);
+      line-height: 1.4;
+      font-family: Arial, sans-serif;
+    }
+
+    footer a {
+      color: #555;
+      text-decoration: underline;
+      margin: 0 4px;
+    }
+
+    @media (max-width: 600px) {
+      .timeline-image {
+        height: auto;
+        max-height: 300px;
+        width: auto;
+        max-width: 100%;
+      }
+
+      .back-button {
+        font-size: 16px;
+        padding: 16px 24px;
+      }
+    }
   </style>
 </head>
 <body>
 
+<main>
   <h1>Nuestra Línea del Tiempo 🕰️</h1>
 
   <div class="main-box">
     <div class="scroll-container">
-      <img src="Precomp. 1_00545.jpg" alt="Línea de tiempo" class="timeline-image">
+      <img src="Precomp. 1_00545.jpg" alt="Línea de tiempo" class="timeline-image" />
     </div>
   </div>
 
   <a href="home.html" class="back-button">← Volver al Inicio</a>
+</main>
 
-  <!-- Música -->
-  <audio id="music" autoplay loop style="display:none;">
-    <source src="Gustavo Cerati - Vivo (Official Audio) - GustavoCeratiVEVO.mp3" type="audio/mp3">
-  </audio>
-  <footer style="font-size: 12px; color: #555; margin-top: 60px; line-height: 1.4; max-width: 600px; margin-left: auto; margin-right: auto; text-align: center; font-family: Arial, sans-serif;">
-  <p><strong>Disponible en:</strong> Celulares/PC/Netboks/p>
+<!-- Música -->
+<audio id="music" autoplay loop style="display: none;">
+  <source src="Gustavo Cerati - Vivo (Official Audio) - GustavoCeratiVEVO.mp3" type="audio/mp3">
+</audio>
+
+<footer>
+  <p><strong>Disponible en:</strong> Celulares / PC / Netbooks</p>
   <p><em>Creado por Lorenzo Pierresteguy</em><br>
-  En este Proyecto se usaron ayudas como Google Sheets ,cloudinary y fue subida a github.</p>
-  <p>
-    <a href="#" style="color: #555; text-decoration: underline;">Información corporativa</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Privacidad</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Ajustes de cookies</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Política de cookies</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Legal</a>
+     En este proyecto se usaron ayudas como Google Sheets, Cloudinary y fue subido a GitHub.
   </p>
-  <p>Pagina exclusivamente para  Mia arias </p>
+  <p>
+    <a href="#">Información corporativa</a> | 
+    <a href="#">Privacidad</a> | 
+    <a href="#">Ajustes de cookies</a> | 
+    <a href="#">Política de cookies</a> | 
+    <a href="#">Legal</a>
+  </p>
+  <p>Página exclusivamente para Mia Arias ❤️</p>
+</footer>
 
 </body>
 </html>
