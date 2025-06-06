@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Galería con Cloudinary</title>
+  <title>Galería con Cloudinary y SheetDB</title>
   <style>
     body {
       background: #fdf5f7;
@@ -50,13 +50,20 @@
 
   <script>
     const cloudName = 'doewcjxiq';
-    const uploadPreset = 'galeria_anonima'; // ⚠️ Debe ser un preset sin firma (unsigned)
+    const uploadPreset = 'galeria_anonima'; // Tu preset sin firma
+
+    const SHEETDB_URL = 'https://sheetdb.io/api/v1/bp0czxw82222u';
 
     const fileInput = document.getElementById('fileInput');
     const uploadBtn = document.getElementById('uploadBtn');
     const gallery = document.getElementById('gallery');
 
-    // Al subir una imagen
+    function addImageToGallery(url) {
+      const img = document.createElement('img');
+      img.src = url;
+      gallery.appendChild(img);
+    }
+
     uploadBtn.addEventListener('click', async () => {
       if (!fileInput.files.length) {
         alert('Seleccioná una imagen primero');
@@ -68,34 +75,41 @@
       formData.append('file', file);
       formData.append('upload_preset', uploadPreset);
 
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: 'POST',
-        body: formData
-      });
+      try {
+        // Subir a Cloudinary
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        const imageUrl = data.secure_url;
 
-      const data = await res.json();
-      const imageUrl = data.secure_url;
+        // Guardar URL en Google Sheets vía SheetDB
+        await fetch(SHEETDB_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: { url: imageUrl } })
+        });
 
-      // Guardar en localStorage para mantener al recargar
-      let savedImages = JSON.parse(localStorage.getItem('images')) || [];
-      savedImages.push(imageUrl);
-      localStorage.setItem('images', JSON.stringify(savedImages));
-
-      addImageToGallery(imageUrl);
-      fileInput.value = '';
+        addImageToGallery(imageUrl);
+        fileInput.value = '';
+      } catch (error) {
+        alert('Error al subir la imagen');
+        console.error(error);
+      }
     });
 
-    // Mostrar imagen en la galería
-    function addImageToGallery(url) {
-      const img = document.createElement('img');
-      img.src = url;
-      gallery.appendChild(img);
-    }
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch(SHEETDB_URL);
+        const data = await res.json();
 
-    // Al cargar la página, mostrar imágenes guardadas
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedImages = JSON.parse(localStorage.getItem('images')) || [];
-      savedImages.forEach(url => addImageToGallery(url));
+        data.forEach(item => {
+          if (item.url) addImageToGallery(item.url);
+        });
+      } catch (error) {
+        console.error('Error cargando imágenes:', error);
+      }
     });
   </script>
 
