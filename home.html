@@ -4,48 +4,77 @@
   <meta charset="UTF-8">
   <title>Un Año Juntos</title>
   <style>
-      body {
-    background: linear-gradient(135deg, #f5f5f5, #b0b0b0);
-    font-family: 'Playfair Display', serif;
-    text-align: center;
-    padding: 50px;
-    margin: 0;
+     body {
+  background: linear-gradient(135deg, #f5f5f5, #b0b0b0);
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+  padding: 50px;
+  margin: 0;
+  font-size: 18px; /* Tamaño base un poco más grande */
 }
 
-    #inicio, #menu-opciones {
-      display: none;
-    }
+h1 {
+  color: #ff6b81;
+  font-size: 42px;
+  margin-bottom: 30px;
+}
 
-    #menu-opciones.active {
-      display: block;
-    }
+.section-link {
+  display: block;
+  width: 260px;
+  background-color: #fff;
+  color: #000;
+  text-decoration: none;
+  padding: 14px 25px;
+  margin: 12px auto;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
 
-    h1 {
-      color: #ff6b81;
-      font-size: 42px;
-      margin-bottom: 30px;
-    }
+.section-link:hover {
+  background-color: #ff6b81;
+  color: #fff;
+}
 
-    .section-link {
-      display: block;
-      width: 260px;
-      background-color: #fff;
-      color: #000;
-      text-decoration: none;
-      padding: 14px 25px;
-      margin: 12px auto;
-      border-radius: 8px;
-      font-size: 18px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      border: none;
-      cursor: pointer;
-    }
+footer {
+  font-size: 12px;
+  color: #555;
+  margin-top: 60px;
+  line-height: 1.4;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
 
-    .section-link:hover {
-      background-color: #ff6b81;
-      color: #fff;
-    }
+/* Media queries para pantallas pequeñas */
+@media (max-width: 600px) {
+  body {
+    padding: 20px;
+    font-size: 16px;
+  }
+  
+  h1 {
+    font-size: 32px;
+  }
+  
+  .section-link {
+    width: 90%;  /* Botones ocupan casi todo el ancho */
+    padding: 18px 0;
+    font-size: 20px;
+    margin: 10px auto;
+  }
+
+  footer {
+    font-size: 14px;
+    padding: 0 10px;
+  }
+}
   </style>
 </head>
 <body>
