@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Galería con Supabase</title>
+  <title>Galería con Supabase Storage</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     body {
@@ -42,19 +42,23 @@
 </head>
 <body>
 
-  <h1>Galería de Fotos</h1>
+  <h1>Galería de fotos</h1>
 
   <input type="file" id="fileInput" accept="image/*" />
   <button id="uploadBtn">Subir Foto</button>
 
   <div class="gallery-grid" id="gallery"></div>
 
+  <!-- Inicialización de Supabase -->
   <script>
     const supabaseUrl = "https://sirfkieteanyrdifckxr.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpcmZraWV0ZWFueXJkaWZja3hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxNjMyNTAsImV4cCI6MjA2NDczOTI1MH0.mcm2aJ_kLMTaLM_81bVlBWYxBZvr5xEnXeBj70N-Gfw";
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
     const BUCKET = "fotos12";
+  </script>
 
+  <!-- Lógica principal -->
+  <script>
     document.addEventListener("DOMContentLoaded", () => {
       const fileInput = document.getElementById("fileInput");
       const uploadBtn = document.getElementById("uploadBtn");
@@ -67,18 +71,11 @@
         }
 
         const file = fileInput.files[0];
-
-        if (!file.type.startsWith('image/')) {
-          alert("Solo se permiten imágenes.");
-          return;
-        }
-
         const filePath = `${Date.now()}_${file.name}`;
 
         const { error } = await supabase.storage.from(BUCKET).upload(filePath, file);
-
         if (error) {
-          console.error("Error al subir la imagen:", error);
+          console.error("Error al subir:", error);
           alert("Error al subir la imagen.");
           return;
         }
@@ -90,17 +87,14 @@
 
       async function loadGallery() {
         gallery.innerHTML = "";
-        const { data, error } = await supabase.storage.from(BUCKET).list("", {
-          limit: 100,
-          sortBy: { column: "created_at", order: "desc" }
-        });
 
+        const { data: files, error } = await supabase.storage.from(BUCKET).list("", { limit: 100 });
         if (error) {
           console.error("Error al cargar galería:", error);
           return;
         }
 
-        for (const file of data) {
+        for (const file of files) {
           const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(file.name);
           const img = document.createElement("img");
           img.src = urlData.publicUrl;
