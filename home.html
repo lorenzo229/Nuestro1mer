@@ -49,6 +49,7 @@
     .slide h1 {
       font-size: 48px;
       margin-bottom: 20px;
+      text-align: center;
     }
 
     .slide a {
@@ -139,6 +140,7 @@
     dots[index].classList.add('active');
   }
 
+  // Navegación por clic en puntos
   dots.forEach(dot => {
     dot.addEventListener('click', () => {
       const index = parseInt(dot.getAttribute('data-index'));
@@ -146,6 +148,7 @@
     });
   });
 
+  // Navegación por rueda (desktop)
   let scrollBlock = false;
   window.addEventListener('wheel', (e) => {
     if (scrollBlock) return;
@@ -157,6 +160,29 @@
     }
     setTimeout(() => scrollBlock = false, 800);
   });
+
+  // Navegación por swipe (móvil)
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  slides.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, false);
+
+  slides.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleGesture();
+  }, false);
+
+  function handleGesture() {
+    const sensitivity = 50;
+    if (touchEndX < touchStartX - sensitivity && currentSlide < dots.length - 1) {
+      goToSlide(currentSlide + 1);
+    }
+    if (touchEndX > touchStartX + sensitivity && currentSlide > 0) {
+      goToSlide(currentSlide - 1);
+    }
+  }
 </script>
 
 </body>
