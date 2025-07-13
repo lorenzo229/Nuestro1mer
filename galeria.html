@@ -8,39 +8,100 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { font-family: 'Dosis', sans-serif; background-color: #1b2b35; }
+    html {
+      font-family: 'Dosis', sans-serif;
+      background-color: #fff6f0;
+    }
+
+    body {
+      background-color: #fff6f0;
+      color: #333;
+    }
 
     .hero-portfolio--header {
-      min-height: 40vh;
-      position: relative;
-      padding: 3rem 0 0;
-      background-color: #202020;
+      padding: 2rem 0 1rem;
+      background-color: #fff6f0;
+      text-align: center;
     }
 
     .hero-portfolio--header-intro {
-      text-align: center;
-      font-size: 4vmax;
-      color: white;
+      font-size: 3.5vmax;
+      color: #ff6b81;
       text-transform: uppercase;
-      position: relative;
+    }
+
+    .upload-section {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .custom-file-input {
+      display: none;
+    }
+
+    .file-label {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 30px;
+      background-color: #ffd3d8;
+      color: #333;
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+      transition: background 0.3s ease;
+    }
+
+    .file-label:hover {
+      background-color: #ffc0c7;
+    }
+
+    .upload-section button,
+    .back-button {
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      background-color: #ff6b81;
+      color: white;
+      transition: background 0.3s ease;
+      margin-top: 8px;
+    }
+
+    .upload-section button:hover,
+    .back-button:hover {
+      background-color: #e14b65;
+    }
+
+    .back-button {
+      display: inline-block;
+      text-decoration: none;
+      margin-top: 1rem;
+      background-color: #444;
     }
 
     .hero-portfolio--grid {
       width: 100%;
       max-width: 1000px;
-      margin: -5vh auto 2rem;
+      margin: 1rem auto 3rem;
       display: grid;
       grid-gap: 1rem;
-      padding: 1rem;
+      padding: 0 1rem;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     }
 
     .c-card {
       position: relative;
       overflow: hidden;
-      border-radius: 10px;
-      transition: all 250ms ease-in-out;
+      border-radius: 12px;
+      background-color: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
       cursor: pointer;
+    }
+
+    .c-card:hover {
+      transform: scale(1.03);
     }
 
     .c-card--image {
@@ -48,28 +109,18 @@
       height: 100%;
       aspect-ratio: 4/3;
       object-fit: cover;
-      transition: transform 0.3s;
+      display: block;
     }
 
     .c-card--name {
-      position: absolute;
-      bottom: 0.5rem;
-      left: 0.5rem;
-      font-size: 1em;
-      color: white;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 4px 8px;
-      border-radius: 5px;
-    }
-
-    .c-card:hover .c-card--image {
-      transform: scale(1.05);
+      display: none;
     }
 
     .ed-modal-container {
       background: rgba(0,0,0,0.7);
       position: fixed;
       top: 0;
+      left: 0;
       width: 100%;
       height: 100vh;
       display: flex;
@@ -100,12 +151,21 @@
       max-height: 90vh;
       opacity: 0;
       transition: opacity 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ed-modal-content--section {
+      border: none;
+      background: transparent;
+      padding: 0;
     }
 
     .ed-modal-content--section img {
       display: block;
       max-width: 100%;
-      max-height: 80vh;
+      max-height: 85vh;
       border-radius: 12px;
     }
 
@@ -119,7 +179,7 @@
 
     footer {
       font-size: 12px;
-      color: #ccc;
+      color: #555;
       margin-top: 60px;
       line-height: 1.4;
       max-width: 600px;
@@ -130,7 +190,7 @@
     }
 
     footer a {
-      color: #aaa;
+      color: #555;
       text-decoration: underline;
     }
   </style>
@@ -141,13 +201,30 @@
     <h1 class="hero-portfolio--header-intro">Nuestra Galería</h1>
   </header>
 
-  <section class="hero-portfolio--grid" id="galleryGrid">
-    <!-- Las imágenes se insertan por JS -->
-  </section>
+  <!-- Zona para subir fotos -->
+  <div class="upload-section">
+    <label for="fileInput" class="file-label">Seleccionar Foto</label>
+    <input type="file" id="fileInput" accept="image/*" class="custom-file-input" />
+    <br>
+    <button id="uploadBtn">Subir Foto</button>
+    <br>
+    <a href="home.html" class="back-button">← Volver al Inicio</a>
+  </div>
 
-  <!-- Modal dinámico -->
+  <!-- Galería -->
+  <section class="hero-portfolio--grid" id="galleryGrid"></section>
+
+  <!-- Script -->
   <script>
     const SHEETDB_URL = 'https://sheetdb.io/api/v1/bp0czxw82222u';
+    const cloudName = 'doewcjxiq';
+    const uploadPreset = 'galeria_anonima';
+
+    const fileInput = document.getElementById('fileInput');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileLabel = document.querySelector('.file-label');
+
+    fileLabel.addEventListener('click', () => fileInput.click());
 
     const createCard = (url) => {
       const card = document.createElement('div');
@@ -157,12 +234,7 @@
       img.src = url;
       img.className = 'c-card--image';
 
-      const name = document.createElement('span');
-      name.className = 'c-card--name';
-      name.textContent = 'Imagen';
-
       card.appendChild(img);
-      card.appendChild(name);
 
       card.addEventListener('click', () => {
         showModal(url);
@@ -210,10 +282,45 @@
       }
     };
 
+    uploadBtn.addEventListener('click', async () => {
+      if (!fileInput.files.length) {
+        alert('Seleccioná una imagen primero');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', uploadPreset);
+
+      try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        const imageUrl = data.secure_url;
+
+        await fetch(SHEETDB_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: { url: imageUrl } })
+        });
+
+        const gallery = document.getElementById('galleryGrid');
+        const card = createCard(imageUrl);
+        gallery.prepend(card);
+        fileInput.value = '';
+      } catch (error) {
+        alert('Error al subir la imagen');
+        console.error(error);
+      }
+    });
+
     document.addEventListener('DOMContentLoaded', loadImages);
   </script>
 
-  <!-- Footer tuyo intacto -->
+  <!-- Footer -->
   <footer>
     <p><strong>Disponible en:</strong> Celulares/PC/Netboks</p>
     <p><em>Creado por Lorenzo Pierresteguy</em><br>
