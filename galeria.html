@@ -3,264 +3,230 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Galería de Fotos - Historias</title>
+  <title>Galería de Fotos 3D</title>
+  <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      background: linear-gradient(135deg, #f5f5f5, #b0b0b0);
-      color: #fff;
-      font-family: 'Playfair Display', serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-    h1 {
-      color: #ff6b81;
-      margin-top: 10px;
-      font-size: 24px;
-    }
-    input[type="file"], .upload-button, .nav-button, .view-all-btn, .back-button {
-      padding: 10px 20px;
-      border-radius: 30px;
-      font-size: 14px;
-      margin: 10px 5px;
-      border: none;
-      cursor: pointer;
-    }
-    input[type="file"] {
-      border: 1px solid #ccc;
-      background: #fff;
-      color: #000;
-    }
-    .upload-button, .nav-button, .view-all-btn {
-      background-color: #ff6b81;
-      color: white;
-    }
-    .upload-button:hover, .nav-button:hover, .view-all-btn:hover {
-      background-color: #e14b65;
-    }
-    .back-button {
-      background-color: #444;
-      color: white;
-      text-decoration: none;
-    }
-    .gallery-container {
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-family: 'Dosis', sans-serif; background-color: #1b2b35; }
+
+    .hero-portfolio--header {
+      min-height: 40vh;
       position: relative;
-      width: 100%;
-      max-width: 420px;
-      height: 70vh;
-      background-color: #111;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      padding: 3rem 0 0;
+      background-color: #202020;
     }
-    .gallery-image {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: none;
-    }
-    .gallery-image.active {
-      display: block;
-      animation: fade 0.5s ease-in-out;
-    }
-    @keyframes fade {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    .nav-buttons {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.9);
-      overflow-y: auto;
-      z-index: 1000;
-      padding: 20px;
-    }
-    .close-modal {
+
+    .hero-portfolio--header-intro {
+      text-align: center;
+      font-size: 4vmax;
       color: white;
-      font-size: 28px;
-      position: absolute;
-      top: 15px;
-      right: 30px;
+      text-transform: uppercase;
+      position: relative;
+    }
+
+    .hero-portfolio--grid {
+      width: 100%;
+      max-width: 1000px;
+      margin: -5vh auto 2rem;
+      display: grid;
+      grid-gap: 1rem;
+      padding: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    .c-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      transition: all 250ms ease-in-out;
       cursor: pointer;
     }
-    #modalGallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-    }
-    #modalGallery img {
+
+    .c-card--image {
       width: 100%;
-      max-width: 45%;
-      height: auto;
-      border-radius: 10px;
+      height: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .c-card--name {
+      position: absolute;
+      bottom: 0.5rem;
+      left: 0.5rem;
+      font-size: 1em;
+      color: white;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 4px 8px;
+      border-radius: 5px;
+    }
+
+    .c-card:hover .c-card--image {
+      transform: scale(1.05);
+    }
+
+    .ed-modal-container {
+      background: rgba(0,0,0,0.7);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      z-index: 2000;
+      transition: opacity 0.3s ease;
+    }
+
+    .ed-modal-container::before {
+      content: '✖';
+      color: #fff;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5em;
+      cursor: pointer;
+      opacity: .6;
+    }
+
+    .ed-modal-container:hover::before {
+      opacity: 1;
+    }
+
+    .ed-modal-content {
+      max-width: 90%;
+      max-height: 90vh;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .ed-modal-content--section img {
+      display: block;
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 12px;
+    }
+
+    .ed-modal-container.is-active {
+      opacity: 1;
+    }
+
+    .ed-modal-container.is-active .ed-modal-content {
+      opacity: 1;
+    }
+
+    footer {
+      font-size: 12px;
+      color: #ccc;
+      margin-top: 60px;
+      line-height: 1.4;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+
+    footer a {
+      color: #aaa;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
-  <h1>❤️ Nuestra Galería</h1>
-  <input type="file" id="fileInput" accept="image/*" />
-  <button id="uploadBtn" class="upload-button">Subir Foto</button>
+  <header class="hero-portfolio--header">
+    <h1 class="hero-portfolio--header-intro">Nuestra Galería</h1>
+  </header>
 
-  <div class="gallery-container" id="gallery"></div>
+  <section class="hero-portfolio--grid" id="galleryGrid">
+    <!-- Las imágenes se insertan por JS -->
+  </section>
 
-  <div class="nav-buttons">
-    <button class="nav-button" onclick="prevImage()">⬅ Anterior</button>
-    <button class="nav-button" onclick="nextImage()">Siguiente ➡</button>
-    <button class="view-all-btn" onclick="openModal()">🖼 Ver Todas</button>
-  </div>
-
-  <a href="home.html" class="back-button">← Volver al Inicio</a>
-
-  <!-- Modal -->
-  <div class="modal" id="modal">
-    <span class="close-modal" onclick="closeModal()">&times;</span>
-    <div id="modalGallery"></div>
-  </div>
-
+  <!-- Modal dinámico -->
   <script>
-    const cloudName = 'doewcjxiq';
-    const uploadPreset = 'galeria_anonima';
     const SHEETDB_URL = 'https://sheetdb.io/api/v1/bp0czxw82222u';
 
-    const fileInput = document.getElementById('fileInput');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const gallery = document.getElementById('gallery');
-    const modal = document.getElementById('modal');
-    const modalGallery = document.getElementById('modalGallery');
-    let images = [];
-    let currentIndex = 0;
-    let interval = null;
+    const createCard = (url) => {
+      const card = document.createElement('div');
+      card.className = 'c-card';
 
-    function showImage(index) {
-      const allImages = document.querySelectorAll(".gallery-image");
-      allImages.forEach(img => img.classList.remove("active"));
-      if (allImages[index]) {
-        allImages[index].classList.add("active");
-      }
-    }
-
-    function addImageToGallery(url) {
       const img = document.createElement('img');
       img.src = url;
-      img.className = "gallery-image";
-      gallery.appendChild(img);
-      images.push(img);
-      if (images.length === 1) showImage(0);
+      img.className = 'c-card--image';
 
-      const modalImg = document.createElement('img');
-      modalImg.src = url;
-      modalGallery.appendChild(modalImg);
-    }
+      const name = document.createElement('span');
+      name.className = 'c-card--name';
+      name.textContent = 'Imagen';
 
-    function nextImage() {
-      if (images.length > 0) {
-        currentIndex = (currentIndex + 1) % images.length;
-        showImage(currentIndex);
-      }
-    }
+      card.appendChild(img);
+      card.appendChild(name);
 
-    function prevImage() {
-      if (images.length > 0) {
-        currentIndex = (currentIndex - 1 + images.length) % images.length;
-        showImage(currentIndex);
-      }
-    }
+      card.addEventListener('click', () => {
+        showModal(url);
+      });
 
-    function startAutoSlide() {
-      interval = setInterval(() => {
-        nextImage();
-      }, 4000);
-    }
+      return card;
+    };
 
-    function stopAutoSlide() {
-      if (interval) clearInterval(interval);
-    }
+    const showModal = (src) => {
+      const modalContent = document.createElement('div');
+      modalContent.className = 'ed-modal-content';
 
-    function openModal() {
-      modal.style.display = "block";
-      stopAutoSlide();
-    }
+      modalContent.innerHTML = `
+        <dialog class="ed-modal-content--section" open>
+          <img src="${src}" alt="Imagen ampliada" />
+        </dialog>
+      `;
 
-    function closeModal() {
-      modal.style.display = "none";
-      startAutoSlide();
-    }
+      const modalContainer = document.createElement('div');
+      modalContainer.className = 'ed-modal-container is-active';
+      modalContainer.appendChild(modalContent);
 
-    uploadBtn.addEventListener('click', async () => {
-      if (!fileInput.files.length) {
-        alert('Seleccioná una imagen primero');
-        return;
-      }
+      document.body.appendChild(modalContainer);
 
-      const file = fileInput.files[0];
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', uploadPreset);
+      modalContainer.addEventListener('click', (e) => {
+        if (e.target === modalContainer || e.target.textContent === '✖') {
+          document.body.removeChild(modalContainer);
+        }
+      });
+    };
 
-      try {
-        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-        const imageUrl = data.secure_url;
-
-        await fetch(SHEETDB_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data: { url: imageUrl } })
-        });
-
-        addImageToGallery(imageUrl);
-        fileInput.value = '';
-      } catch (error) {
-        alert('Error al subir la imagen');
-        console.error(error);
-      }
-    });
-
-    window.addEventListener('DOMContentLoaded', async () => {
+    const loadImages = async () => {
       try {
         const res = await fetch(SHEETDB_URL);
         const data = await res.json();
+        const gallery = document.getElementById('galleryGrid');
         data.forEach(item => {
-          if (item.url) addImageToGallery(item.url);
+          if (item.url) {
+            const card = createCard(item.url);
+            gallery.appendChild(card);
+          }
         });
-        startAutoSlide();
       } catch (error) {
         console.error('Error cargando imágenes:', error);
       }
-    });
+    };
+
+    document.addEventListener('DOMContentLoaded', loadImages);
   </script>
- <footer style="font-size: 12px; color: #555; margin-top: 60px; line-height: 1.4; max-width: 600px; margin-left: auto; margin-right: auto; text-align: center; font-family: Arial, sans-serif;">
-  <p><strong>Disponible en:</strong> Celulares/PC/Netboks/p>
-  <p><em>Creado por Lorenzo Pierresteguy</em><br>
-  En este Proyecto se usaron ayudas como Google Sheets ,cloudinary y fue subida a github.</p>
-  <p>
-    <a href="#" style="color: #555; text-decoration: underline;">Información corporativa</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Privacidad</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Ajustes de cookies</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Política de cookies</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Legal</a>
-  </p>
-  <p>Pagina exclusivamente para  Mia arias </p>
+
+  <!-- Footer tuyo intacto -->
+  <footer>
+    <p><strong>Disponible en:</strong> Celulares/PC/Netboks</p>
+    <p><em>Creado por Lorenzo Pierresteguy</em><br>
+    En este Proyecto se usaron ayudas como Google Sheets, Cloudinary y fue subida a GitHub.</p>
+    <p>
+      <a href="#">Información corporativa</a> |
+      <a href="#">Privacidad</a> |
+      <a href="#">Ajustes de cookies</a> |
+      <a href="#">Política de cookies</a> |
+      <a href="#">Legal</a>
+    </p>
+    <p>Página exclusivamente para Mia Arias ❤️</p>
+  </footer>
+
 </body>
 </html>
-"""

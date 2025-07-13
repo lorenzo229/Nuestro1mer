@@ -19,17 +19,17 @@ body{
 
 .container{
     position: relative;
-    width: 850px;
-    height: 550px;
+    width: 1050px;
+    height: 750px;
     background: #f5f3ea;
     margin: 20px;
-    border-radius: 30px;
+    border-radius: 50px;
     box-shadow: 0 0 30px rgba(0, 0, 0, .2);
     overflow: hidden;
 }
 
     .container h1{
-        font-size: 36px;
+        font-size: 56px;
         margin: -10px 0;
     }
 
@@ -72,7 +72,7 @@ form{ width: 100%; }
         border-radius: 8px;
         border: none;
         outline: none;
-        font-size: 16px;
+        font-size: 36px;
         color: #333;
         font-weight: 500;
     }
@@ -87,7 +87,7 @@ form{ width: 100%; }
         right: 20px;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 20px;
+        font-size: 30px;
     }
 
 .forgot-link{ margin: -15px 0 15px; }
@@ -104,7 +104,7 @@ form{ width: 100%; }
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
     border: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 30px;
     color: #ffffff;
     font-weight: 600;
 }
@@ -235,5 +235,5 @@ form{ width: 100%; }
 @media screen and (max-width: 400px){
     .form-box { padding: 20px; }
 
-    .toggle-panel h1{font-size: 30px; }
+    .toggle-panel h1{font-size: 40px; }
 }
