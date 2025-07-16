@@ -2,21 +2,22 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Mensaje para Vos</title>
-  <link rel="stylesheet" href="Home style.css">
+  <title>Mensajes para Vos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       background: linear-gradient(135deg, #f5f5f5, #b0b0b0);
       font-family: 'Playfair Display', serif;
-      padding: 60px 30px;
+      padding: 20px;
+      margin: 0;
       text-align: center;
     }
 
     .text-section {
-      max-width: 800px;
+      max-width: 400px;
       margin: 0 auto;
       background-color: #fffdf9;
-      padding: 40px;
+      padding: 25px;
       border-left: 6px solid #ff6b81;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -26,39 +27,142 @@
     }
 
     .text-section h1 {
-      font-size: 40px;
+      font-size: 28px;
       margin-bottom: 20px;
       color: #ff6b81;
     }
 
+    textarea, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      font-family: 'Open Sans', sans-serif;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #ff6b81;
+      color: white;
+      border: none;
+      font-size: 18px;
+      font-family: 'Open Sans', sans-serif;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background-color: #e14b65;
+    }
+
     .back-button {
       display: inline-block;
+      margin-top: 20px;
       background: #ff6b81;
       color: #fff;
       padding: 12px 24px;
       border-radius: 30px;
-      font-size: 40px;
+      font-size: 20px;
       text-decoration: none;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      margin-top: 30px;
     }
 
     .back-button:hover {
       background-color: #e14b65;
     }
+
+    #mensajes {
+      text-align: left;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    #mensajes p {
+      padding: 8px;
+      margin: 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    footer {
+      font-size: 14px;
+      color: #555;
+      margin-top: 30px;
+      line-height: 1.4;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+
+    footer a {
+      color: #555;
+      text-decoration: underline;
+    }
   </style>
 </head>
- <footer style="font-size: 20px; color: #555; margin-top: 60px; line-height: 1.4; max-width: 600px; margin-left: auto; margin-right: auto; text-align: center; font-family: Arial, sans-serif;">
-  <p><strong>Disponible en:</strong> Celulares/PC/Netboks/p>
-  <p><em>Creado por Lorenzo Pierresteguy</em><br>
-  En este Proyecto se usaron ayudas como Google Sheets ,cloudinary y fue subida a github.</p>
-  <p>
-    <a href="#" style="color: #555; text-decoration: underline;">Información corporativa</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Privacidad</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Ajustes de cookies</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Política de cookies</a> | 
-    <a href="#" style="color: #555; text-decoration: underline;">Legal</a>
-  </p>
-  <p>Pagina exclusivamente para  Mia arias </p>
+<body>
+  <div class="text-section">
+    <h1>Dejá tu Mensaje</h1>
+    <form id="mensaje-form">
+      <select name="autor" required>
+        <option value="Lorenzo">Lorenzo</option>
+        <option value="Mia">Mia</option>
+      </select>
+      <textarea name="mensaje" rows="4" placeholder="Escribí tu mensaje..." required></textarea>
+      <button type="submit">Enviar</button>
+    </form>
+
+    <h2 style="margin-top: 30px; color: #ff6b81;">Mensajes</h2>
+    <div id="mensajes"></div>
+
+    <a href="home.html" class="back-button">Volver al Inicio</a>
+  </div>
+
+  <footer>
+    <p><strong>Disponible en:</strong> Celulares / PC / Netbooks</p>
+    <p><em>Creado por Lorenzo Pierresteguy</em><br>
+    En este proyecto se usaron ayudas como Google Sheets, Cloudinary y fue subida a GitHub.</p>
+    <p>
+      <a href="#">Información corporativa</a> | 
+      <a href="#">Privacidad</a> | 
+      <a href="#">Ajustes de cookies</a> | 
+      <a href="#">Política de cookies</a> | 
+      <a href="#">Legal</a>
+    </p>
+    <p>Página exclusivamente para Mia Arias</p>
+  </footer>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby6libW6cXo2wRn9qgipxad9oG1OXyPFYZ4pY8QjERKciQeDXOQAnnYGUbp-TH7XubM/exec';
+
+    document.getElementById('mensaje-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const form = e.target;
+      fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+        .then(response => {
+          form.reset();
+          cargarMensajes();
+        })
+        .catch(error => alert('Error: ' + error.message));
+    });
+
+    function cargarMensajes() {
+      fetch(scriptURL + '?read=1')
+        .then(response => response.json())
+        .then(data => {
+          const contenedor = document.getElementById('mensajes');
+          contenedor.innerHTML = '';
+          data.reverse().forEach(row => {
+            contenedor.innerHTML += `<p><strong>${row.autor}:</strong> ${row.mensaje}</p>`;
+          });
+        });
+    }
+
+    cargarMensajes();
+  </script>
 </body>
 </html>
+
