@@ -69,10 +69,10 @@ form{ width: 100%; }
         width: 100%;
         padding: 13px 50px 13px 20px;
         background: #eee;
-        border-radius: 8px;
+        border-radius: 18px;
         border: none;
         outline: none;
-        font-size: 36px;
+        font-size: 45px;
         color: #333;
         font-weight: 500;
     }
@@ -87,7 +87,7 @@ form{ width: 100%; }
         right: 20px;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 30px;
+        font-size: 45px;
     }
 
 .forgot-link{ margin: -15px 0 15px; }
@@ -104,7 +104,7 @@ form{ width: 100%; }
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
     border: none;
     cursor: pointer;
-    font-size: 30px;
+    font-size: 40px;
     color: #ffffff;
     font-weight: 600;
 }
