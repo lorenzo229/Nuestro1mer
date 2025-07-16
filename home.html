@@ -175,7 +175,7 @@
   }, false);
 
   function handleGesture() {
-    const sensitivity = 25;
+    const sensitivity = 10;
     if (touchEndX < touchStartX - sensitivity && currentSlide < dots.length - 1) {
       goToSlide(currentSlide + 1);
     }
