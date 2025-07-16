@@ -77,12 +77,29 @@
       text-align: left;
       margin-top: 20px;
       font-size: 16px;
+      min-height: 50px;
     }
 
     #mensajes p {
       padding: 8px;
       margin: 0;
       border-bottom: 1px solid #eee;
+    }
+
+    .loader {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      border: 5px solid #ff6b81;
+      border-top: 5px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     footer {
@@ -116,6 +133,7 @@
     </form>
 
     <h2 style="margin-top: 30px; color: #ff6b81;">Mensajes</h2>
+    <div id="loader" class="loader"></div>
     <div id="mensajes"></div>
 
     <a href="home.html" class="back-button">Volver al Inicio</a>
@@ -136,7 +154,7 @@
   </footer>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycby6libW6cXo2wRn9qgipxad9oG1OXyPFYZ4pY8QjERKciQeDXOQAnnYGUbp-TH7XubM/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby6libW6cXo2wRn9qgipxad9oG1OXyPFYZ4pY8QjERKciQeDXOQAnnYGUbp-TH7XubM/exec'; // CAMBIALO POR TU URL REAL
 
     document.getElementById('mensaje-form').addEventListener('submit', e => {
       e.preventDefault();
@@ -150,10 +168,15 @@
     });
 
     function cargarMensajes() {
+      const loader = document.getElementById('loader');
+      const contenedor = document.getElementById('mensajes');
+      loader.style.display = 'block';
+      contenedor.innerHTML = '';
+
       fetch(scriptURL + '?read=1')
         .then(response => response.json())
         .then(data => {
-          const contenedor = document.getElementById('mensajes');
+          loader.style.display = 'none';
           contenedor.innerHTML = '';
           data.reverse().forEach(row => {
             contenedor.innerHTML += `<p><strong>${row.autor}:</strong> ${row.mensaje}</p>`;
@@ -165,4 +188,3 @@
   </script>
 </body>
 </html>
-
