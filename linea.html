@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Línea del Tiempo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css?family=Dosis:700|Open+Sans:400,700|Playfair+Display:700" rel="stylesheet">
+  <style>
+    :root {
+      --bgColorMenu: #1d1d27;
+      --duration: .7s;
+      --color1: #ffb457;
+      --color2: #ff96bd;
+      --color3: #9999fb;
+      --color4: #ffe797;
+      --color5: #cffff1;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Dosis', 'Open Sans', Arial, sans-serif;
+      background: var(--color4);
+      transition: background-color var(--duration);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: hidden;
+    }
+
+    /* NAVBAR */
+    .menu {
+      margin: 0;
+      display: flex;
+      width: 32.05em;
+      font-size: 1.5em;
+      padding: 0 2.85em;
+      position: relative;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--bgColorMenu);
+      border-radius: 1.5em;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.07);
+      margin-top: 2em;
+      z-index: 20;
+    }
+    .menu__item {
+      all: unset;
+      flex-grow: 1;
+      z-index: 100;
+      display: flex;
+      cursor: pointer;
+      position: relative;
+      border-radius: 50%;
+      align-items: center;
+      will-change: transform;
+      justify-content: center;
+      padding: 0.55em 0 0.85em;
+      transition: transform var(--timeOut , var(--duration));
+    }
+    .menu__item::before {
+      content: "";
+      z-index: -1;
+      width: 4.2em;
+      height: 4.2em;
+      border-radius: 50%;
+      position: absolute;
+      transform: scale(0);
+      transition: background-color var(--duration), transform var(--duration);
+    }
+    .menu__item.active {
+      transform: translate3d(0, -.8em , 0);
+    }
+    .menu__item.active::before {
+      transform: scale(1);
+      background-color: var(--bgColorItem);
+    }
+    .icon {
+      width: 2.6em;
+      height: 2.6em;
+      stroke: white;
+      fill: transparent;
+      stroke-width: 1pt;
+      stroke-miterlimit: 10;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 400;
+    }
+    .menu__item.active .icon {
+      animation: strok 1.5s reverse;
+    }
+    @keyframes strok {
+      100% { stroke-dashoffset: 400; }
+    }
+    .menu__border{
+      left: 0;
+      bottom: 99%;
+      width: 10.9em;
+      height: 2.4em;
+      position: absolute;
+      clip-path: url(#menu);
+      will-change: transform;
+      background-color: var(--bgColorMenu);
+      transition: transform var(--timeOut , var(--duration));
+    }
+    .svg-container {
+      width: 0;
+      height: 0;
+    }
+    @media screen and (max-width: 50em) {
+      .menu { font-size: .95em; }
+    }
+    @media screen and (max-width: 700px) {
+      .menu { width: 100vw; padding: 0 0.2em; border-radius: 0; }
+    }
+    @media screen and (max-width: 480px) {
+      .menu { font-size: .7em; }
+    }
+    /* END NAVBAR */
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 40px;
+      width: 100%;
+      max-width: 900px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      color: #ff6b81;
+      margin-bottom: 20px;
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .main-box {
+      width: 90%;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.05);
+      padding: 30px;
+      margin: 20px auto;
+    }
+
+    .scroll-container {
+      overflow-x: auto;
+      display: flex;
+      gap: 25px;
+      padding: 25px 0;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .scroll-container::-webkit-scrollbar-thumb {
+      background: #bbb;
+      border-radius: 10px;
+    }
+
+    .timeline-image {
+      height: 500px;
+      border-radius: 5px;
+      object-fit: cover;
+      max-width: 100%;
+      box-shadow: 0 2px 18px rgba(0,0,0,0.08);
+    }
+
+    .back-button {
+      display: inline-block;
+      background: #ff6b81;
+      color: #fff;
+      padding: 18px 36px;
+      border-radius: 30px;
+      font-size: 45px;
+      font-family: 'Open Sans', sans-serif;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+      margin: 30px auto;
+      text-align: center;
+    }
+
+    .back-button:hover {
+      background-color: #e14b65;
+    }
+
+    footer {
+      font-size: 25px;
+      color: #555;
+      text-align: center;
+      padding: 20px 10px;
+      background: rgba(255, 255, 255, 0.2);
+      line-height: 1.4;
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    footer a {
+      color: #555;
+      text-decoration: underline;
+      margin: 0 10px;
+    }
+
+    @media (max-width: 600px) {
+      .timeline-image {
+        height: auto;
+        max-height: 300px;
+        width: auto;
+        max-width: 100%;
+      }
+
+      .back-button {
+        font-size: 16px;
+        padding: 16px 24px;
+      }
+
+      main { padding-top: 15px; }
+      .main-box { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- BARRA DE NAVEGACIÓN -->
+  <menu class="menu">
+    <!-- INICIO -->
+    <button class="menu__item" style="--bgColorItem: #ff8c00;" title="Inicio">
+      <svg class="icon" viewBox="0 0 24 24">
+        <path d="M3.8,6.6h16.4"/>
+        <path d="M20.2,12.1H3.8"/>
+        <path d="M3.8,17.5h16.4"/>
+      </svg>
+    </button>
+    <!-- MENSAJES (Carta) -->
+    <button class="menu__item" style="--bgColorItem: #f54888;" title="Mensajes">
+      <svg class="icon" viewBox="0 0 24 24">
+        <rect x="3" y="7" width="18" height="10" rx="2" ry="2"/>
+        <polyline points="3,7 12,14 21,7"/>
+      </svg>
+    </button>
+    <!-- CONTADORES (Reloj) -->
+    <button class="menu__item" style="--bgColorItem:#4343f5;" title="Contadores">
+      <svg class="icon" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"/>
+        <polyline points="12,7 12,12 16,14"/>
+      </svg>
+    </button>
+    <!-- LINEA DE TIEMPO (Calendario) -->
+    <button class="menu__item active" style="--bgColorItem: #e0b115;" title="Línea de tiempo">
+      <svg class="icon" viewBox="0 0 24 24">
+        <rect x="4" y="4" width="16" height="16" rx="2"/>
+        <line x1="4" y1="9" x2="20" y2="9"/>
+        <circle cx="8" cy="13" r="1"/>
+        <circle cx="12" cy="13" r="1"/>
+        <circle cx="16" cy="13" r="1"/>
+      </svg>
+    </button>
+    <!-- GALERÍA (Montaña/foto) -->
+    <button class="menu__item" style="--bgColorItem:#65ddb7;" title="Galería">
+      <svg class="icon" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="14" rx="2"/>
+        <circle cx="8.5" cy="10.5" r="1.5"/>
+        <polyline points="21,19 15,13 11,17 3,9"/>
+      </svg>
+    </button>
+    <div class="menu__border"></div>
+  </menu>
+  <div class="svg-container">
+    <svg viewBox="0 0 202.9 45.5">
+      <clipPath id="menu" clipPathUnits="objectBoundingBox" transform="scale(0.0049285362247413 0.021978021978022)">
+        <path d="M6.7,45.5c5.7,0.1,14.1-0.4,23.3-4c5.7-2.3,9.9-5,18.1-10.5c10.7-7.1,11.8-9.2,20.6-14.3c5-2.9,9.2-5.2,15.2-7
+          c7.1-2.1,13.3-2.3,17.6-2.1c4.2-0.2,10.5,0.1,17.6,2.1c6.1,1.8,10.2,4.1,15.2,7c8.8,5,9.9,7.1,20.6,14.3c8.3,5.5,12.4,8.2,18.1,10.5
+          c9.2,3.6,17.6,4.2,23.3,4H6.7z"/>
+      </clipPath>
+    </svg>
+  </div>
+  <!-- END NAV -->
+
+  <main>
+    <h1>Nuestra Línea del Tiempo 🕰️</h1>
+    <div class="main-box">
+      <div class="scroll-container">
+        <img src="Precomp. 1_00545.jpg" alt="Línea de tiempo" class="timeline-image" />
+      </div>
+    </div>
+    <a href="index.html" class="back-button">← Volver al Inicio</a>
+  </main>
+
+  <footer>
+    <p><strong>Disponible en:</strong> Celulares / PC / Netbooks</p>
+    <p><em>Creado por Lorenzo Pierresteguy</em><br>
+       En este proyecto se usaron ayudas como Google Sheets, Cloudinary y fue subido a GitHub.
+    </p>
+    <p>
+      <a href="#">Información corporativa</a> | 
+      <a href="#">Privacidad</a> | 
+      <a href="#">Ajustes de cookies</a> | 
+      <a href="#">Política de cookies</a> | 
+      <a href="#">Legal</a>
+    </p>
+    <p>Página exclusivamente para Mia Arias ❤️</p>
+  </footer>
+
+  <script>
+    // --- BARRA DE NAVEGACIÓN ---
+    const body = document.body;
+    const bgColorsBody = ["#ffb457", "#ff96bd", "#9999fb", "#ffe797", "#cffff1"];
+    const menu = body.querySelector(".menu");
+    const menuItems = menu.querySelectorAll(".menu__item");
+    const menuBorder = menu.querySelector(".menu__border");
+    let activeItem = menu.querySelector(".active");
+
+    // Rutas de navegación
+    const navRoutes = [
+      "index.html",      // 0 - Inicio
+      "mensaje.html",    // 1 - Mensajes
+      "contador.html",   // 2 - contador
+      "linea-tiempo.html", // 3 - Línea de tiempo (este archivo)
+      "galeria.html"    // 4 - Galería
+    ];
+
+    function clickItem(item, index) {
+      menu.style.removeProperty("--timeOut");
+      if (activeItem == item) return;
+      if (activeItem) activeItem.classList.remove("active");
+      item.classList.add("active");
+      body.style.backgroundColor = bgColorsBody[index];
+      activeItem = item;
+      offsetMenuBorder(activeItem, menuBorder);
+      // Navegación (excepto si ya es el actual)
+      if (index !== 3) window.location.href = navRoutes[index];
+    }
+    function offsetMenuBorder(element, menuBorder) {
+      const offsetActiveItem = element.getBoundingClientRect();
+      const left = Math.floor(offsetActiveItem.left - menu.offsetLeft - (menuBorder.offsetWidth  - offsetActiveItem.width) / 2) +  "px";
+      menuBorder.style.transform = `translate3d(${left}, 0 , 0)`;
+    }
+    offsetMenuBorder(activeItem, menuBorder);
+
+    menuItems.forEach((item, index) => {
+      item.addEventListener("click", () => clickItem(item, index));
+    });
+
+    window.addEventListener("resize", () => {
+      offsetMenuBorder(activeItem, menuBorder);
+      menu.style.setProperty("--timeOut", "none");
+    });
+  </script>
+</body>
+</html>

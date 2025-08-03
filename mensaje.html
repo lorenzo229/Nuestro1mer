@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mensajes para Vos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Dosis:700|Open+Sans:400,700|Playfair+Display:700" rel="stylesheet">
+  <style>
+    :root {
+      --bgColorMenu: #1d1d27;
+      --duration: .7s;
+      --color1: #ffb457;
+      --color2: #ff96bd;
+      --color3: #9999fb;
+      --color4: #ffe797;
+      --color5: #cffff1;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Dosis', 'Open Sans', Arial, sans-serif;
+      background: var(--color2);
+      transition: background-color var(--duration);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* NAVBAR */
+    .menu {
+      margin: 0;
+      display: flex;
+      width: 32.05em;
+      font-size: 1.5em;
+      padding: 0 2.85em;
+      position: relative;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--bgColorMenu);
+      border-radius: 1.5em;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.07);
+      margin-top: 2em;
+      z-index: 20;
+    }
+    .menu__item {
+      all: unset;
+      flex-grow: 1;
+      z-index: 100;
+      display: flex;
+      cursor: pointer;
+      position: relative;
+      border-radius: 50%;
+      align-items: center;
+      will-change: transform;
+      justify-content: center;
+      padding: 0.55em 0 0.85em;
+      transition: transform var(--timeOut , var(--duration));
+    }
+    .menu__item::before {
+      content: "";
+      z-index: -1;
+      width: 4.2em;
+      height: 4.2em;
+      border-radius: 50%;
+      position: absolute;
+      transform: scale(0);
+      transition: background-color var(--duration), transform var(--duration);
+    }
+    .menu__item.active {
+      transform: translate3d(0, -.8em , 0);
+    }
+    .menu__item.active::before {
+      transform: scale(1);
+      background-color: var(--bgColorItem);
+    }
+    .icon {
+      width: 2.6em;
+      height: 2.6em;
+      stroke: white;
+      fill: transparent;
+      stroke-width: 1pt;
+      stroke-miterlimit: 10;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 400;
+    }
+    .menu__item.active .icon {
+      animation: strok 1.5s reverse;
+    }
+    @keyframes strok {
+      100% { stroke-dashoffset: 400; }
+    }
+    .menu__border{
+      left: 0;
+      bottom: 99%;
+      width: 10.9em;
+      height: 2.4em;
+      position: absolute;
+      clip-path: url(#menu);
+      will-change: transform;
+      background-color: var(--bgColorMenu);
+      transition: transform var(--timeOut , var(--duration));
+    }
+    .svg-container {
+      width: 0;
+      height: 0;
+    }
+    @media screen and (max-width: 50em) {
+      .menu { font-size: .95em; }
+    }
+    @media screen and (max-width: 700px) {
+      .menu { width: 100vw; padding: 0 0.2em; border-radius: 0; }
+    }
+    @media screen and (max-width: 480px) {
+      .menu { font-size: .7em; }
+    }
+    /* END NAVBAR */
+
+    /* MENSAJES */
+    .chat-container {
+      width: 100%;
+      max-width: 400px;
+      background-color: #fffdf9;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-top: 2.5em;
+    }
+    .chat-container h1 {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      color: #ff6b81;
+      margin-bottom: 20px;
+    }
+    .author-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+    .author-button {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #ff6b81;
+      color: white;
+      font-weight: bold;
+      font-size: 20px;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .author-button.selected {
+      background-color: #e14b65;
+      box-shadow: 0 0 0 3px rgba(255,107,129,0.3);
+    }
+    textarea, button.send-btn {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button.send-btn {
+      background-color: #ff6b81;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button.send-btn:hover {
+      background-color: #e14b65;
+    }
+    .contenedo_msj {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .mensaje-izq, .mensaje-der {
+      display: flex;
+      align-items: flex-start;
+    }
+    .mensaje-der {
+      flex-direction: row-reverse;
+    }
+    .avatar {
+      width: 35px;
+      height: 35px;
+      background-color: #e8ecf1;
+      border-radius: 50%;
+      margin: 0 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      color: #555;
+    }
+    .cuerpo_msj {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      max-width: 75%;
+    }
+    .mensaje-izq .cuerpo_msj {
+      align-items: flex-start;
+    }
+    .mensaje-der .cuerpo_msj {
+      align-items: flex-end;
+    }
+    .msj-texto {
+      padding: 10px;
+      background-color: #e8ecf1;
+      border-radius: 10px;
+      margin-bottom: 5px;
+      font-size: 0.9em;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .mensaje-der .msj-texto {
+      background-color: #dcebff;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .loader {
+      width: 40px;
+      height: 40px;
+      border: 5px solid #ff6b81;
+      border-top: 5px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+      display: none;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .back-button {
+      display: block;
+      text-align: center;
+      margin: 25px auto 0;
+      background-color: #ff6b81;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+      max-width: 200px;
+    }
+    .back-button:hover {
+      background-color: #e14b65;
+    }
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 12px;
+      color: #555;
+      max-width: 600px;
+      line-height: 1.4;
+    }
+    footer a {
+      color: #555;
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      .chat-container {
+        padding: 10px;
+        margin-top: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- BARRA DE NAVEGACIÓN -->
+  <menu class="menu">
+    <!-- INICIO -->
+    <button class="menu__item" style="--bgColorItem: #ff8c00;" title="Inicio">
+      <svg class="icon" viewBox="0 0 24 24">
+        <path d="M3.8,6.6h16.4"/>
+        <path d="M20.2,12.1H3.8"/>
+        <path d="M3.8,17.5h16.4"/>
+      </svg>
+    </button>
+    <!-- MENSAJES (Carta) -->
+    <button class="menu__item active" style="--bgColorItem: #f54888;" title="Mensajes">
+      <svg class="icon" viewBox="0 0 24 24">
+        <rect x="3" y="7" width="18" height="10" rx="2" ry="2"/>
+        <polyline points="3,7 12,14 21,7"/>
+      </svg>
+    </button>
+    <!-- CONTADORES (Reloj) -->
+    <button class="menu__item" style="--bgColorItem:#4343f5;" title="Contadores">
+      <svg class="icon" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"/>
+        <polyline points="12,7 12,12 16,14"/>
+      </svg>
+    </button>
+    <!-- LINEA DE TIEMPO (Calendario) -->
+    <button class="menu__item" style="--bgColorItem: #e0b115;" title="Línea de tiempo">
+      <svg class="icon" viewBox="0 0 24 24">
+        <rect x="4" y="4" width="16" height="16" rx="2"/>
+        <line x1="4" y1="9" x2="20" y2="9"/>
+        <circle cx="8" cy="13" r="1"/>
+        <circle cx="12" cy="13" r="1"/>
+        <circle cx="16" cy="13" r="1"/>
+      </svg>
+    </button>
+    <!-- GALERÍA (Montaña/foto) -->
+    <button class="menu__item" style="--bgColorItem:#65ddb7;" title="Galería">
+      <svg class="icon" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="14" rx="2"/>
+        <circle cx="8.5" cy="10.5" r="1.5"/>
+        <polyline points="21,19 15,13 11,17 3,9"/>
+      </svg>
+    </button>
+    <div class="menu__border"></div>
+  </menu>
+  <div class="svg-container">
+    <svg viewBox="0 0 202.9 45.5">
+      <clipPath id="menu" clipPathUnits="objectBoundingBox" transform="scale(0.0049285362247413 0.021978021978022)">
+        <path d="M6.7,45.5c5.7,0.1,14.1-0.4,23.3-4c5.7-2.3,9.9-5,18.1-10.5c10.7-7.1,11.8-9.2,20.6-14.3c5-2.9,9.2-5.2,15.2-7
+          c7.1-2.1,13.3-2.3,17.6-2.1c4.2-0.2,10.5,0.1,17.6,2.1c6.1,1.8,10.2,4.1,15.2,7c8.8,5,9.9,7.1,20.6,14.3c8.3,5.5,12.4,8.2,18.1,10.5
+          c9.2,3.6,17.6,4.2,23.3,4H6.7z"/>
+      </clipPath>
+    </svg>
+  </div>
+  <!-- END NAV -->
+
+  <div class="chat-container">
+    <h1>Dejá tu Mensaje</h1>
+
+    <div class="author-buttons">
+      <button class="author-button" data-author="Lorenzo">L</button>
+      <button class="author-button" data-author="Mia">M</button>
+    </div>
+
+    <form id="mensaje-form">
+      <input type="hidden" name="autor" id="autorInput" value="">
+      <textarea name="mensaje" rows="3" placeholder="Escribí tu mensaje..." required></textarea>
+      <button type="submit" class="send-btn">Enviar</button>
+    </form>
+
+    <div id="loader" class="loader"></div>
+
+    <div id="mensajes" class="contenedo_msj"></div>
+
+    <a href="index.html" class="back-button">Volver al Inicio</a>
+  </div>
+
+  <footer>
+    <p><strong>Disponible en:</strong> Celulares / PC / Netbooks</p>
+    <p><em>Creado por Lorenzo Pierresteguy</em><br>
+      En este proyecto se usaron ayudas como Google Sheets, Cloudinary y fue subida a GitHub.</p>
+    <p>
+      <a href="#">Información corporativa</a> |
+      <a href="#">Privacidad</a> |
+      <a href="#">Cookies</a> |
+      <a href="#">Legal</a>
+    </p>
+    <p>Página exclusivamente para Mia Arias</p>
+  </footer>
+
+  <script>
+    // --- BARRA DE NAVEGACIÓN ---
+    const body = document.body;
+    const bgColorsBody = ["#ffb457", "#ff96bd", "#9999fb", "#ffe797", "#cffff1"];
+    const menu = body.querySelector(".menu");
+    const menuItems = menu.querySelectorAll(".menu__item");
+    const menuBorder = menu.querySelector(".menu__border");
+    let activeItem = menu.querySelector(".active");
+
+    // Rutas de navegación
+    const navRoutes = [
+      "index.html",      // 0 - Inicio
+      "mensaje.html",    // 1 - Mensajes (este archivo)
+      "contador.html",   // 2 - contador
+      "linea-tiempo.html", // 3 - Línea de tiempo
+      "galeria.html"    // 4 - Galería
+    ];
+
+    function clickItem(item, index) {
+      menu.style.removeProperty("--timeOut");
+      if (activeItem == item) return;
+      if (activeItem) activeItem.classList.remove("active");
+      item.classList.add("active");
+      body.style.backgroundColor = bgColorsBody[index];
+      activeItem = item;
+      offsetMenuBorder(activeItem, menuBorder);
+      // Navegación (excepto si ya es el actual)
+      if (index !== 1) window.location.href = navRoutes[index];
+    }
+    function offsetMenuBorder(element, menuBorder) {
+      const offsetActiveItem = element.getBoundingClientRect();
+      const left = Math.floor(offsetActiveItem.left - menu.offsetLeft - (menuBorder.offsetWidth  - offsetActiveItem.width) / 2) +  "px";
+      menuBorder.style.transform = `translate3d(${left}, 0 , 0)`;
+    }
+    offsetMenuBorder(activeItem, menuBorder);
+
+    menuItems.forEach((item, index) => {
+      item.addEventListener("click", () => clickItem(item, index));
+    });
+
+    window.addEventListener("resize", () => {
+      offsetMenuBorder(activeItem, menuBorder);
+      menu.style.setProperty("--timeOut", "none");
+    });
+
+    // --- MENSAJES ---
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby6libW6cXo2wRn9qgipxad9oG1OXyPFYZ4pY8QjERKciQeDXOQAnnYGUbp-TH7XubM/exec';
+
+    const autorInput = document.getElementById('autorInput');
+    const authorButtons = document.querySelectorAll('.author-button');
+
+    authorButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        authorButtons.forEach(btn => btn.classList.remove('selected'));
+        button.classList.add('selected');
+        autorInput.value = button.dataset.author;
+      });
+    });
+
+    document.getElementById('mensaje-form').addEventListener('submit', e => {
+      e.preventDefault();
+      if (!autorInput.value) {
+        alert('Primero elegí si sos "L" o "M".');
+        return;
+      }
+      const form = e.target;
+      fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+        .then(response => {
+          form.reset();
+          cargarMensajes();
+        })
+        .catch(error => alert('Error: ' + error.message));
+    });
+
+    function cargarMensajes() {
+      const loader = document.getElementById('loader');
+      const contenedor = document.getElementById('mensajes');
+      loader.style.display = 'block';
+      contenedor.innerHTML = '';
+
+      fetch(scriptURL + '?read=1')
+        .then(response => response.json())
+        .then(data => {
+          loader.style.display = 'none';
+          contenedor.innerHTML = '';
+
+          data.reverse().forEach(row => {
+            const lado = row.autor === 'Lorenzo' ? 'mensaje-der' : 'mensaje-izq';
+            contenedor.innerHTML += `
+              <div class="${lado}">
+                <div class="avatar">${row.autor.charAt(0)}</div>
+                <div class="cuerpo_msj">
+                  <div class="msj-texto">${row.mensaje}</div>
+                </div>
+              </div>`;
+          });
+        });
+    }
+
+    cargarMensajes();
+  </script>
+</body>
+</html>
