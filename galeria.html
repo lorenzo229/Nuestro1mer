@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Playfair+Display:700" rel="stylesheet">
   <style>
     :root {
-  --mainColor: #65ddb7;
+      --mainColor: #65ddb7;
       --bgColorMenu: #1d1d27;
       --duration: .7s;
       --color1: #ffb457;
@@ -33,8 +33,6 @@
       align-items: center;
       overflow-x: hidden;
     }
-
-    /* NAVBAR */
     .menu {
       margin: 0;
       display: flex;
@@ -127,29 +125,23 @@
     @media screen and (max-width: 480px) {
       .menu { font-size: .7em; }
     }
-    /* END NAVBAR */
-
     .hero-portfolio--header {
       padding: 2rem 0 1rem;
       background-color: transparent;
       text-align: center;
     }
-
     .hero-portfolio--header-intro {
       font-size: 3.5vmax;
       color: var(--mainColor);
       text-transform: uppercase;
     }
-
     .upload-section {
       text-align: center;
       margin-bottom: 2rem;
     }
-
     .custom-file-input {
       display: none;
     }
-
     .file-label {
       display: inline-block;
       padding: 10px 20px;
@@ -161,11 +153,9 @@
       margin-bottom: 0.5rem;
       transition: background 0.3s ease;
     }
-
     .file-label:hover {
       background-color: color-mix(in srgb, var(--mainColor) 30%, white);
     }
-
     .upload-section button,
     .back-button {
       padding: 10px 20px;
@@ -178,19 +168,16 @@
       transition: background 0.3s ease;
       margin-top: 8px;
     }
-
     .upload-section button:hover,
     .back-button:hover {
       background-color: color-mix(in srgb, var(--mainColor) 85%, black);
     }
-
     .back-button {
       display: inline-block;
       text-decoration: none;
       margin-top: 1rem;
       background-color: #444;
     }
-
     .hero-portfolio--grid {
       width: 100%;
       max-width: 1000px;
@@ -200,7 +187,6 @@
       padding: 0 1rem;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     }
-
     .c-card {
       position: relative;
       overflow: hidden;
@@ -210,11 +196,9 @@
       transition: transform 0.3s ease;
       cursor: pointer;
     }
-
     .c-card:hover {
       transform: scale(1.03);
     }
-
     .c-card--image {
       width: 100%;
       aspect-ratio: 4/3;
@@ -224,11 +208,9 @@
       border-radius: 12px;
       background-color: #eee;
     }
-
     .c-card--name {
       display: none;
     }
-
     .ed-modal-container {
       background: rgba(0,0,0,0.7);
       position: fixed;
@@ -243,7 +225,6 @@
       z-index: 2000;
       transition: opacity 0.3s ease;
     }
-
     .ed-modal-container::before {
       content: '✖';
       color: #fff;
@@ -254,11 +235,9 @@
       cursor: pointer;
       opacity: .6;
     }
-
     .ed-modal-container:hover::before {
       opacity: 1;
     }
-
     .ed-modal-content {
       max-width: 90%;
       max-height: 90vh;
@@ -268,28 +247,23 @@
       align-items: center;
       justify-content: center;
     }
-
     .ed-modal-content--section {
       border: none;
       background: transparent;
       padding: 0;
     }
-
     .ed-modal-content--section img {
       display: block;
       max-width: 100%;
       max-height: 85vh;
       border-radius: 12px;
     }
-
     .ed-modal-container.is-active {
       opacity: 1;
     }
-
     .ed-modal-container.is-active .ed-modal-content {
       opacity: 1;
     }
-
     footer {
       font-size: 12px;
       color: #555;
@@ -301,7 +275,6 @@
       text-align: center;
       font-family: Arial, sans-serif;
     }
-
     footer a {
       color: #555;
       text-decoration: underline;
@@ -377,12 +350,16 @@
     <h1 class="hero-portfolio--header-intro">Nuestra Galería</h1>
   </header>
 
-  <!-- Zona para subir fotos -->
+  <!-- Zona para subir fotos mejorada (SIN doble click) -->
   <div class="upload-section">
-    <label for="fileInput" class="file-label">Seleccionar Foto</label>
+    <label for="fileInput" class="file-label" id="fileLabel">Seleccionar Foto</label>
     <input type="file" id="fileInput" accept="image/*" class="custom-file-input" />
+    <div id="previewWrapper" style="display:none; flex-direction:column; align-items:center;">
+      <img id="previewImage" src="" alt="Previsualización" style="max-width:200px;max-height:180px;border-radius:10px;margin-bottom:10px;box-shadow:0 4px 12px rgba(0,0,0,0.08);" />
+      <button type="button" id="cancelBtn" style="background:#f54888;margin-bottom:1rem;">Cancelar</button>
+    </div>
     <br>
-    <button id="uploadBtn">Subir Foto</button>
+    <button id="uploadBtn" style="display:none">Subir Foto</button>
     <br>
   </div>
 
@@ -391,78 +368,98 @@
 
   <!-- Script -->
   <script>
-   const body = document.body;
-  const bgColorsBody = ["#ffb457", "#ff96bd", "#9999fb", "#ffe797", "#cffff1"];
-  const menu = document.querySelector(".menu");
-  const menuItems = Array.from(menu.querySelectorAll(".menu__item"));
-  const menuBorder = menu.querySelector(".menu__border");
-  const navRoutes = [
-    "index.html",     // 0 - Inicio
-    "mensaje.html",   // 1 - Mensajes
-    "contador.html",  // 2 - Contadores
-    "linea.html",     // 3 - Línea de tiempo
-    "galeria.html"    // 4 - Galería
-  ];
+    // ----------------- NAVBAR ANIMACIÓN -----------------
+    const body = document.body;
+    const bgColorsBody = ["#ffb457", "#ff96bd", "#9999fb", "#ffe797", "#cffff1"];
+    const menu = document.querySelector(".menu");
+    const menuItems = Array.from(menu.querySelectorAll(".menu__item"));
+    const menuBorder = menu.querySelector(".menu__border");
+    const navRoutes = [
+      "index.html",     // 0 - Inicio
+      "mensaje.html",   // 1 - Mensajes
+      "contador.html",  // 2 - Contadores
+      "linea.html",     // 3 - Línea de tiempo
+      "galeria.html"    // 4 - Galería
+    ];
 
-  // Encuentra el índice del botón activo al cargar
-  let activeIndex = menuItems.findIndex(item => item.classList.contains("active"));
-  if (activeIndex < 0) activeIndex = 0;
-  
-  // Posiciona el borde centrado en el botón activo
-  function positionBorder(idx, instant = false) {
-    const btn = menuItems[idx];
-    const btnCenter = btn.offsetLeft + btn.offsetWidth / 2;
-    const borderHalf = menuBorder.offsetWidth / 2;
-    if (instant) {
-      menuBorder.style.transition = "none";
-      body.style.transition = "background-color 0s";
-    } else {
-      menuBorder.style.transition = "";
-      body.style.transition = "";
+    let activeIndex = menuItems.findIndex(item => item.classList.contains("active"));
+    if (activeIndex < 0) activeIndex = 0;
+
+    function positionBorder(idx, instant = false) {
+      const btn = menuItems[idx];
+      const btnCenter = btn.offsetLeft + btn.offsetWidth / 2;
+      const borderHalf = menuBorder.offsetWidth / 2;
+      if (instant) {
+        menuBorder.style.transition = "none";
+        body.style.transition = "background-color 0s";
+      } else {
+        menuBorder.style.transition = "";
+        body.style.transition = "";
+      }
+      menuBorder.style.transform = `translateX(${btnCenter - borderHalf}px)`;
+      body.style.backgroundColor = bgColorsBody[idx];
     }
-    menuBorder.style.transform = `translateX(${btnCenter - borderHalf}px)`;
-    body.style.backgroundColor = bgColorsBody[idx];
-  }
 
-  // Inicialización al cargar la ventana
-  window.addEventListener("DOMContentLoaded", () => {
-  requestAnimationFrame(() => {
-    positionBorder(activeIndex, true);
-    menuBorder.classList.add("visible");
-  });
-});
-
-  // Manejar clic en cada botón
-  menuItems.forEach((item, idx) => {
-    item.addEventListener("click", () => {
-      if (idx === activeIndex) return;      // si clic al mismo, no hacer nada
-      // remueve estado previo
-      menuItems[activeIndex].classList.remove("active");
-      // marca nuevo
-      item.classList.add("active");
-      // anima borde desde la posición antigua a la nueva
-      positionBorder(idx, false);
-      // actualiza índice activo
-      activeIndex = idx;
-      // delay pequeño para permitir ver la animación
-      setTimeout(() => {
-        window.location.href = navRoutes[idx];
-      }, 300);
+    window.addEventListener("DOMContentLoaded", () => {
+      requestAnimationFrame(() => {
+        positionBorder(activeIndex, true);
+        menuBorder.classList.add("visible");
+      });
     });
-  });
-   
-    // --- GALERÍA ORIGINAL ---
+
+    menuItems.forEach((item, idx) => {
+      item.addEventListener("click", () => {
+        if (idx === activeIndex) return;
+        menuItems[activeIndex].classList.remove("active");
+        item.classList.add("active");
+        positionBorder(idx, false);
+        activeIndex = idx;
+        setTimeout(() => {
+          window.location.href = navRoutes[idx];
+        }, 300);
+      });
+    });
+
+    // ------------------ GALERÍA ------------------
+    // Configuración
     const SHEETDB_URL = 'https://sheetdb.io/api/v1/bp0czxw82222u';
     const cloudName = 'doewcjxiq';
     const uploadPreset = 'galeria_anonima';
 
+    // Elementos de subida
     const fileInput = document.getElementById('fileInput');
     const uploadBtn = document.getElementById('uploadBtn');
-    const fileLabel = document.querySelector('.file-label');
+    const fileLabel = document.getElementById('fileLabel');
+    const previewWrapper = document.getElementById('previewWrapper');
+    const previewImage = document.getElementById('previewImage');
+    const cancelBtn = document.getElementById('cancelBtn');
 
-    fileLabel.addEventListener('click', () => fileInput.click());
+    // ¡NO agregar ningún listener para fileLabel! (El label ya abre el explorador)
 
-    const createCard = (url) => {
+    // Mostrar previsualización y opciones al seleccionar imagen
+    fileInput.addEventListener('change', function () {
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          previewImage.src = e.target.result;
+          previewWrapper.style.display = 'flex';
+          fileLabel.style.display = 'none';
+          uploadBtn.style.display = 'inline-block';
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    });
+
+    // Cancelar selección
+    cancelBtn.addEventListener('click', function () {
+      fileInput.value = '';
+      previewWrapper.style.display = 'none';
+      fileLabel.style.display = 'inline-block';
+      uploadBtn.style.display = 'none';
+    });
+
+    // Crear card de imagen
+    function createCard(url) {
       const card = document.createElement('div');
       card.className = 'c-card';
 
@@ -477,9 +474,10 @@
       });
 
       return card;
-    };
+    }
 
-    const showModal = (src) => {
+    // Modal para imagen ampliada
+    function showModal(src) {
       const modalContent = document.createElement('div');
       modalContent.className = 'ed-modal-content';
 
@@ -500,13 +498,15 @@
           document.body.removeChild(modalContainer);
         }
       });
-    };
+    }
 
-    const loadImages = async () => {
+    // Cargar imágenes de SheetDB
+    async function loadImages() {
       try {
         const res = await fetch(SHEETDB_URL);
         const data = await res.json();
         const gallery = document.getElementById('galleryGrid');
+        gallery.innerHTML = ''; // Limpiar antes de cargar
         data.forEach(item => {
           if (item.url) {
             const card = createCard(item.url);
@@ -516,8 +516,9 @@
       } catch (error) {
         console.error('Error cargando imágenes:', error);
       }
-    };
+    }
 
+    // Subir imagen a Cloudinary y guardar en SheetDB
     uploadBtn.addEventListener('click', async () => {
       if (!fileInput.files.length) {
         alert('Seleccioná una imagen primero');
@@ -528,6 +529,10 @@
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', uploadPreset);
+
+      // Animación: Deshabilitar botón y mostrar cargando
+      uploadBtn.textContent = 'Subiendo...';
+      uploadBtn.disabled = true;
 
       try {
         const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
@@ -546,10 +551,19 @@
         const gallery = document.getElementById('galleryGrid');
         const card = createCard(imageUrl);
         gallery.prepend(card);
+
+        // Resetear formulario y estado
         fileInput.value = '';
+        previewWrapper.style.display = 'none';
+        fileLabel.style.display = 'inline-block';
+        uploadBtn.style.display = 'none';
+        uploadBtn.textContent = 'Subir Foto';
+        uploadBtn.disabled = false;
       } catch (error) {
         alert('Error al subir la imagen');
         console.error(error);
+        uploadBtn.textContent = 'Subir Foto';
+        uploadBtn.disabled = false;
       }
     });
 
@@ -570,6 +584,5 @@
     </p>
     <p>Página exclusivamente para Mia Arias ❤️</p>
   </footer>
-
 </body>
 </html>
