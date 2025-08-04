@@ -421,7 +421,8 @@
 
   // Inicialización al cargar la ventana
   window.addEventListener("load", () => {
-    positionBorder(activeIndex, true);
+    setTimeout(() => positionBorder(activeIndex, true), 10);
+
   });
 
   // Manejar clic en cada botón
