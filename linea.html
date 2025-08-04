@@ -315,49 +315,62 @@
   </footer>
 
   <script>
-    // --- BARRA DE NAVEGACIÓN ---
     const body = document.body;
-    const bgColorsBody = ["#ffb457", "#ff96bd", "#9999fb", "#ffe797", "#cffff1"];
-    const menu = body.querySelector(".menu");
-    const menuItems = menu.querySelectorAll(".menu__item");
-    const menuBorder = menu.querySelector(".menu__border");
-    let activeItem = menu.querySelector(".active");
+  const bgColorsBody = ["#ffb457", "#ff96bd", "#9999fb", "#ffe797", "#cffff1"];
+  const menu = document.querySelector(".menu");
+  const menuItems = Array.from(menu.querySelectorAll(".menu__item"));
+  const menuBorder = menu.querySelector(".menu__border");
+  const navRoutes = [
+    "index.html",     // 0 - Inicio
+    "mensaje.html",   // 1 - Mensajes
+    "contador.html",  // 2 - Contadores
+    "linea.html",     // 3 - Línea de tiempo
+    "galeria.html"    // 4 - Galería
+  ];
 
-    // Rutas de navegación
-    const navRoutes = [
-      "index.html",      // 0 - Inicio
-      "mensaje.html",    // 1 - Mensajes
-      "contador.html",   // 2 - contador
-      "linea-tiempo.html", // 3 - Línea de tiempo (este archivo)
-      "galeria.html"    // 4 - Galería
-    ];
+  // Encuentra el índice del botón activo al cargar
+  let activeIndex = menuItems.findIndex(item => item.classList.contains("active"));
+  if (activeIndex < 0) activeIndex = 0;
+  
+  // Posiciona el borde centrado en el botón activo
+  function positionBorder(idx, instant = false) {
+    const btn = menuItems[idx];
+    const btnCenter = btn.offsetLeft + btn.offsetWidth / 2;
+    const borderHalf = menuBorder.offsetWidth / 2;
+    if (instant) {
+      menuBorder.style.transition = "none";
+      body.style.transition = "background-color 0s";
+    } else {
+      menuBorder.style.transition = "";
+      body.style.transition = "";
+    }
+    menuBorder.style.transform = `translateX(${btnCenter - borderHalf}px)`;
+    body.style.backgroundColor = bgColorsBody[idx];
+  }
 
-    function clickItem(item, index) {
-      menu.style.removeProperty("--timeOut");
-      if (activeItem == item) return;
-      if (activeItem) activeItem.classList.remove("active");
+  // Inicialización al cargar la ventana
+  window.addEventListener("load", () => {
+    positionBorder(activeIndex, true);
+  });
+
+  // Manejar clic en cada botón
+  menuItems.forEach((item, idx) => {
+    item.addEventListener("click", () => {
+      if (idx === activeIndex) return;      // si clic al mismo, no hacer nada
+      // remueve estado previo
+      menuItems[activeIndex].classList.remove("active");
+      // marca nuevo
       item.classList.add("active");
-      body.style.backgroundColor = bgColorsBody[index];
-      activeItem = item;
-      offsetMenuBorder(activeItem, menuBorder);
-      // Navegación (excepto si ya es el actual)
-      if (index !== 3) window.location.href = navRoutes[index];
-    }
-    function offsetMenuBorder(element, menuBorder) {
-      const offsetActiveItem = element.getBoundingClientRect();
-      const left = Math.floor(offsetActiveItem.left - menu.offsetLeft - (menuBorder.offsetWidth  - offsetActiveItem.width) / 2) +  "px";
-      menuBorder.style.transform = `translate3d(${left}, 0 , 0)`;
-    }
-    offsetMenuBorder(activeItem, menuBorder);
-
-    menuItems.forEach((item, index) => {
-      item.addEventListener("click", () => clickItem(item, index));
+      // anima borde desde la posición antigua a la nueva
+      positionBorder(idx, false);
+      // actualiza índice activo
+      activeIndex = idx;
+      // delay pequeño para permitir ver la animación
+      setTimeout(() => {
+        window.location.href = navRoutes[idx];
+      }, 300);
     });
-
-    window.addEventListener("resize", () => {
-      offsetMenuBorder(activeItem, menuBorder);
-      menu.style.setProperty("--timeOut", "none");
-    });
+  });
   </script>
 </body>
 </html>
