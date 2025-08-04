@@ -442,10 +442,7 @@
         const res = await fetch(SHEETDB_URL);
         const data = await res.json();
         // Mostrar las 5 más recientes
-        fotos = data.filter(item => item.url);
-          if (fotos.length > 5) {
-           fotos = fotos.sort(() => 0.5 - Math.random()).slice(0, 5);
-      }
+        fotos = data.filter(item => item.url).slice(-5).reverse();
           sliderImg.style.display = 'none';
           sliderLabel.textContent = "Aún no hay fotos 💔";
           sliderDots.innerHTML = "";
