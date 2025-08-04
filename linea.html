@@ -237,6 +237,34 @@
       main { padding-top: 15px; }
       .main-box { padding: 10px; }
     }
+    /* --- Scroll horizontal para imágenes grandes en línea de tiempo --- */
+.scroll-container {
+  overflow-x: auto;
+  display: block;
+  white-space: nowrap;
+  min-width: 100vw;
+  max-width: 100%;
+  /* Permitir un poco más de altura */
+  max-height: 540px;
+}
+
+.timeline-image {
+  display: inline-block;
+  height: 540px;
+  width: auto;
+  min-width: 1200px; /* Así siempre hay scroll incluso en monitores grandes */
+  max-width: none;
+  /* Permite imágenes muy largas */
+}
+@media (max-width: 700px) {
+  .timeline-image {
+    height: 320px;
+    min-width: 600px;
+  }
+  .scroll-container {
+    max-height: 340px;
+  }
+}
   </style>
 </head>
 <body>
