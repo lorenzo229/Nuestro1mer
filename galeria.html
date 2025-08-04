@@ -108,6 +108,11 @@
       will-change: transform;
       background-color: var(--bgColorMenu);
       transition: transform var(--timeOut , var(--duration));
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.7s ease;
+    }
+    .menu__border.visible {
+       opacity: 1;
     }
     .svg-container {
       width: 0;
@@ -286,7 +291,7 @@
     }
 
     footer {
-      font-size: 15px;
+      font-size: 12px;
       color: #555;
       margin-top: 60px;
       line-height: 1.4;
@@ -420,10 +425,12 @@
   }
 
   // Inicialización al cargar la ventana
-  window.addEventListener("load", () => {
-    setTimeout(() => positionBorder(activeIndex, true), 10);
-
+  window.addEventListener("DOMContentLoaded", () => {
+  requestAnimationFrame(() => {
+    positionBorder(activeIndex, true);
+    menuBorder.classList.add("visible");
   });
+});
 
   // Manejar clic en cada botón
   menuItems.forEach((item, idx) => {
