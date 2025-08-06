@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css?family=Dosis:700|Open+Sans:400,700|Playfair+Display:700" rel="stylesheet">
   <style>
     :root {
-  --mainColor: #ff96bd;
+      --mainColor: #ff96bd;
       --bgColorMenu: #1d1d27;
       --duration: .7s;
       --color1: #ffb457;
@@ -377,7 +377,11 @@
     <p>Página exclusivamente para Mia Arias</p>
   </footer>
 
+  <!-- Firebase JS SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script>
+  // --------- NAVBAR ANIMACIÓN ---------
   const body = document.body;
   const bgColorsBody = ["#ffb457", "#ff96bd", "#9999fb", "#ffe797", "#cffff1"];
   const menu = document.querySelector(".menu");
@@ -390,12 +394,8 @@
     "linea.html",     // 3 - Línea de tiempo
     "galeria.html"    // 4 - Galería
   ];
-
-  // Encuentra el índice del botón activo al cargar
   let activeIndex = menuItems.findIndex(item => item.classList.contains("active"));
   if (activeIndex < 0) activeIndex = 0;
-  
-  // Posiciona el borde centrado en el botón activo
   function positionBorder(idx, instant = false) {
     const btn = menuItems[idx];
     const btnCenter = btn.offsetLeft + btn.offsetWidth / 2;
@@ -410,85 +410,103 @@
     menuBorder.style.transform = `translateX(${btnCenter - borderHalf}px)`;
     body.style.backgroundColor = bgColorsBody[idx];
   }
-
-  // Inicialización al cargar la ventana
-  window.addEventListener("load", () => {
-    positionBorder(activeIndex, true);
-  });
-
-  // Manejar clic en cada botón
+  window.addEventListener("load", () => { positionBorder(activeIndex, true); });
   menuItems.forEach((item, idx) => {
     item.addEventListener("click", () => {
-      if (idx === activeIndex) return;      // si clic al mismo, no hacer nada
-      // remueve estado previo
+      if (idx === activeIndex) return;
       menuItems[activeIndex].classList.remove("active");
-      // marca nuevo
       item.classList.add("active");
-      // anima borde desde la posición antigua a la nueva
       positionBorder(idx, false);
-      // actualiza índice activo
       activeIndex = idx;
-      // delay pequeño para permitir ver la animación
       setTimeout(() => {
         window.location.href = navRoutes[idx];
       }, 300);
     });
   });
-    // --- MENSAJES ---
-    const scriptURL = 'https://sheetdb.io/api/v1/gbnc6y7uun9km';
+  // --------- FIN NAVBAR ---------
 
-    const autorInput = document.getElementById('autorInput');
-    const authorButtons = document.querySelectorAll('.author-button');
+  // --------- FIREBASE INICIO ---------
+  const firebaseConfig = {
+    apiKey: "AIzaSyDtdlYq49qmFIumWKXVu7ubaNhbAtLQSMw",
+    authDomain: "nuestrapagina.firebaseapp.com",
+    projectId: "nuestrapagina",
+    storageBucket: "nuestrapagina.firebasestorage.app",
+    messagingSenderId: "1052121061515",
+    appId: "1:1052121061515:web:1b5db00fcc8280a2825c8e"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  // --------- FIN FIREBASE INICIO ---------
 
-    authorButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        authorButtons.forEach(btn => btn.classList.remove('selected'));
-        button.classList.add('selected');
-        autorInput.value = button.dataset.author;
-      });
+  // --------- MENSAJES ---------
+  const autorInput = document.getElementById('autorInput');
+  const authorButtons = document.querySelectorAll('.author-button');
+  authorButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      authorButtons.forEach(btn => btn.classList.remove('selected'));
+      button.classList.add('selected');
+      autorInput.value = button.dataset.author;
     });
+  });
 
-    document.getElementById('mensaje-form').addEventListener('submit', e => {
-      e.preventDefault();
-      if (!autorInput.value) {
-        alert('Primero elegí si sos "L" o "M".');
-        return;
-      }
-      const form = e.target;
-      fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-        .then(response => {
-          form.reset();
-          cargarMensajes();
-        })
-        .catch(error => alert('Error: ' + error.message));
-    });
-
-    function cargarMensajes() {
-      const loader = document.getElementById('loader');
-      const contenedor = document.getElementById('mensajes');
-      loader.style.display = 'block';
-      contenedor.innerHTML = '';
-
-      fetch(scriptURL + '?read=1')
-        .then(response => response.json())
-        .then(data => {
-          loader.style.display = 'none';
-          contenedor.innerHTML = '';
-
-          data.reverse().forEach(row => {
-            const lado = row.autor === 'Lorenzo' ? 'mensaje-der' : 'mensaje-izq';
-            contenedor.innerHTML += `
-              <div class="${lado}">
-                <div class="avatar">${row.autor.charAt(0)}</div>
-                <div class="cuerpo_msj">
-                  <div class="msj-texto">${row.mensaje}</div>
-                </div>
-              </div>`;
-          });
-        });
+  document.getElementById('mensaje-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!autorInput.value) {
+      alert('Primero elegí si sos "L" o "M".');
+      return;
     }
+    const form = e.target;
+    const mensaje = form.mensaje.value.trim();
+    const autor = autorInput.value;
+    if (!mensaje) return;
 
-    cargarMensajes();
+    // Mostrar loader
+    document.getElementById('loader').style.display = 'block';
+
+    try {
+      await db.collection("mensajes").add({
+        autor,
+        mensaje,
+        fecha: new Date().toISOString()
+      });
+      form.reset();
+      authorButtons.forEach(btn => btn.classList.remove('selected'));
+      autorInput.value = "";
+      cargarMensajes();
+    } catch (error) {
+      alert('Error al guardar: ' + error.message);
+    } finally {
+      document.getElementById('loader').style.display = 'none';
+    }
+  });
+
+  async function cargarMensajes() {
+    const loader = document.getElementById('loader');
+    const contenedor = document.getElementById('mensajes');
+    loader.style.display = 'block';
+    contenedor.innerHTML = '';
+    try {
+      const querySnapshot = await db.collection("mensajes").orderBy("fecha", "desc").limit(30).get();
+      loader.style.display = 'none';
+      contenedor.innerHTML = '';
+      querySnapshot.forEach(doc => {
+        const row = doc.data();
+        const lado = row.autor === 'Lorenzo' ? 'mensaje-der' : 'mensaje-izq';
+        contenedor.innerHTML += `
+          <div class="${lado}">
+            <div class="avatar">${row.autor.charAt(0)}</div>
+            <div class="cuerpo_msj">
+              <div class="msj-texto">${row.mensaje}</div>
+            </div>
+          </div>`;
+      });
+    } catch (err) {
+      loader.style.display = 'none';
+      contenedor.innerHTML = '<div style="color:red">Error cargando mensajes</div>';
+    }
+  }
+  cargarMensajes();
+  // --------- FIN MENSAJES ---------
   </script>
 </body>
 </html>
