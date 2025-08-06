@@ -486,7 +486,7 @@
     loader.style.display = 'block';
     contenedor.innerHTML = '';
     try {
-      const querySnapshot = await db.collection("mensajes").orderBy("fecha", "desc").limit(30).get();
+      const querySnapshot = await db.collection("mensajes").orderBy("fecha", "asc").limit(30).get();
       loader.style.display = 'none';
       contenedor.innerHTML = '';
       querySnapshot.forEach(doc => {
